@@ -9,7 +9,7 @@ version=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=pl_empty.kicad_wks
-LastNetListRead=modpsu.net
+LastNetListRead=mod12003.net
 PadDrill=0
 PadDrillOvalY=0
 PadSizeH=0.3
