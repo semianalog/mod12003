@@ -1,4 +1,4 @@
-\documentclass[a4paper,twocolumn,10pt,openany,oneside,final,fleqn]{memoir}
+\documentclass[letterpaper,twocolumn,10pt,openany,oneside,final,fleqn]{memoir}
 
 \usepackage{siunitx}
 \usepackage[margin=2.5cm]{geometry}
@@ -15,6 +15,8 @@
 \usepackage{ccicons}
 \usepackage{todonotes}
 \usepackage{nicefrac}
+\usepackage{pdflscape}
+\usepackage{pdfpages}
 
 \hypersetup{
     colorlinks,
@@ -119,6 +121,7 @@
 \mainmatter
 
 \chapter{Theory of Operation}
+\label{chap:too}
 
 \section{Introduction}
 
@@ -376,5 +379,67 @@ can trip the current limiting feature of some power supplies that might be used
 as an input source.
 
 \subsection{Communications}
+
+
+\newpage
+\chapter{Full Schematics}
+The following pages contain schematics exported directly from the CAD software.
+While they are documented, it is intended that readers will first familiarize
+themselves with the workings of the circuits by reading through the
+\hyperref[chap:too]{Theory of Operation}.
+\includepdf[landscape=true,pages=-,link]{../mod12003.pdf}
+
+
+\newpage
+\chapter{License}
+
+The \Model is open hardware under the CPOHL
+\footnote{Chris Pavlina's Open Hardware License} version 1.0 or higher.
+This is a hardware-relevant adaptation of the simplified BSD license.
+
+\section{CPOHL --- Version 1.0}
+
+Redistribution and use of documentation and source (henceforth referred
+to together as the ``Source''), with or without modification, are
+permitted provided that the following conditions are met:
+
+\begin{itemize}
+    \item{Redistributions of the Source must retain the above copyright
+notice, this list of conditions and the following patent notice
+and disclaimer.}
+    \item{Finished products made using this Source or a derivative thereof
+must reproduce the above copyright notice, this list of conditions
+and the following patent notice and disclaimer in the
+documentation and/or other materials provided with the product.}
+    \item{Neither the name of the licensor, copyright holders and/or patent
+holders, nor the names of the contributors may be used to endorse
+or promote products derived from this software without specific
+prior written permission.}
+\end{itemize}
+
+\paragraph{PATENT NOTICE}
+This license implicitly grants a non-exclusive license to any and all
+patents, held by the licensor and/or contributors, that would otherwise
+restrict or govern the ability to freely modify and redistribute the
+Source and/or product.  The scope of this patent license is limited
+explicitly to those patents held by the licensor and/or contributors,
+and does not extend to patents held by unrelated third parties that may
+cover parts of the design of the Source and product.
+
+\paragraph{DISCLAIMER}
+This product, documentation, source, hardware, and/or software are
+provided by the copyright and/or patent holders and contributors ``as is''
+and any express or implied warranties, including but not limited to, the
+implied warranties of merchantability and fitness for a particular
+purpose are disclaimed. In no event shall the copyright and/or patent
+owner or contributors by liable for any direct, indirect, incidental,
+special, exemplary, or consequential damages (including, but not limited
+to, procurement of substitute goods or services; loss of use, data, or
+profits; or business interruption) however caused and on any theory of
+liability, whether in contract, strict liability, or tort (including
+negligence or otherwise) arising in any way out of the use of this
+material and product, even if advised of the possibility of such damage.
+
+
 
 \end{document}
