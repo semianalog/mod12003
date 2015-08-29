@@ -727,17 +727,6 @@ F 4 "(2) PIN STRIP 100mil; JUMPER 100mil" H 2700 5200 60  0001 C CNN "BOM"
 $EndComp
 Text Notes 700  6500 0    50   ~ 0
 Mating connector: A30980-ND
-$Comp
-L OSHW-SCHEM-PCB6mm SYM1
-U 1 1 55DBE608
-P 7800 7200
-F 0 "SYM1" H 7935 7200 50  0000 L CNN
-F 1 "OSHW-SCHEM-PCB6mm" H 7800 7150 50  0001 C CNN
-F 2 "mech:OSHW-6mm" H 7850 7100 50  0001 C CNN
-F 3 "" H 7800 7200 50  0000 C CNN
-	1    7800 7200
-	1    0    0    -1  
-$EndComp
 Text Notes 7950 4050 0    50   ~ 10
 MOUNTING/HEAT SINKING:
 Text Notes 9100 4700 1    50   ~ 0
@@ -1245,4 +1234,6 @@ $EndComp
 Connection ~ 750  7400
 Text Label 1200 6850 2    50   ~ 0
 PAD_MP1
+Text Notes 7650 7350 0    50   ~ 0
+Open hardware\nCPOHL 1.0 or greater
 $EndSCHEMATC
