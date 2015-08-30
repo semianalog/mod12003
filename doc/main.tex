@@ -34,6 +34,7 @@
 \newcommand{\Pos}[1]{{\ensuremath{+}#1}}
 \newcommand{\Neg}[1]{{\ensuremath{-}#1}}
 \newcommand{\Model}{MOD12003\ }
+\newcommand{\Series}{MOD1\ }
 \newcommand{\rd}[1]{\texttt{#1}}
 \newcommand{\xcircuit}[1]{ \centering \textsf{ \input{#1} } }
 
@@ -59,7 +60,7 @@
 \vfill
 \begin{center}
     The \Model is a standard-precision, \SI{20}{V}, \SI{3}{A} module for the
-    MOD1 series of multi-output, modular power supplies. It uses a hybrid
+    \Series series of multi-output, modular power supplies. It uses a hybrid
     switching + linear architecture that achieves acceptable noise levels for
     most uses while also maintaining low power dissipation.
 \end{center}
@@ -148,7 +149,7 @@ The output is fused, protecting internal circuitry in the event that power
 is applied to the outputs externally, and helping to minimize damage to both the
 \Model and to the device to which power is being supplied if the \Model fails.
 
-The standard MOD1 serial loop interface feeds a capacitive coupler and is
+The standard \Series serial loop interface feeds a capacitive coupler and is
 processed directly by the microcontroller; passthrough to downstream modules is
 also handled in software.
 
@@ -157,7 +158,7 @@ also handled in software.
 \subsection{Microcontroller}
 
 The Microcontroller is the device in control of the entire system. It receives signals
-from the MOD1 motherboard, storing the desired output voltage, current, and slew rate.
+from the \Series motherboard, storing the desired output voltage, current, and slew rate.
 These, combined with stored calibration data, are used to choose setpoints for both the
 Preregulator and the Linear Regulator. Status signals from these circuits, including
 the output voltage and current, regulation mode, and heat sink temperature, are monitored.
@@ -230,7 +231,7 @@ Microcontroller detects multiple error conditions, including overvoltage protect
 output current exceeding a set value (if desired, with a fixed grace period to allow
 inrush currents), thermal overload, and oscillation of the Linear
 Regulator. If Group Error Response is configured, the selected error conditions will
-cause the Microcontroller to notify all the other modules in the MOD1 system, prompting
+cause the Microcontroller to notify all the other modules in the \Series system, prompting
 the entire system to shut down as a precaution.
 
 \subsection{Preregulator}
@@ -379,6 +380,16 @@ as an input source.
 
 \subsection{Communications}
 
+The \Series series uses a loop communications interface. Each node, including the modules
+and the motherboard, has a UART which transmits and receives messages in standard
+8N1 encoding. Each node transmits messages to the next, with the final node returning
+the mssage to the first, in a loop. In this way, an ordering of nodes is developed, such
+that there is no need to manually assign them indices.
+
+For information on the message format, see \cref{app:loopif}.
+
+
+\appendix
 
 \newpage
 \chapter{Full Schematics}
@@ -388,6 +399,10 @@ themselves with the workings of the circuits by reading through the
 \hyperref[chap:too]{Theory of Operation}.
 \includepdf[landscape=true,pages=-,link]{../mod12003.pdf}
 
+
+\newpage
+\chapter{\Series loop interface}
+\label{app:loopif}
 
 \newpage
 \chapter{License}
