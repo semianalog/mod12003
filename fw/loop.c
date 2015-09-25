@@ -1,5 +1,6 @@
 #include "config.h"
 #include "loop.h"
+#include "hardware.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
@@ -24,17 +25,20 @@ volatile uint16_t LOOP_COMMAND;
 volatile uint8_t *LOOP_COMMAND_BYTES = (volatile uint8_t *) &LOOP_COMMAND;
 volatile uint16_t LOOP_DATALEN;
 volatile uint8_t *LOOP_DATALEN_BYTES = (volatile uint8_t *) &LOOP_DATALEN;
+volatile uint16_t LOOP_CRC;
+volatile uint8_t *LOOP_CRC_BYTES = (volatile uint8_t *) &LOOP_CRC;
 
-static bool buffer_push(uint8_t byte) __attribute__((unused));
-static uint8_t buffer_len(void) __attribute__((unused));
-static uint8_t buffer_pop(void) __attribute__((unused));
-static void enable_dre(void) __attribute__((unused));
-static void disable_dre(void) __attribute__((unused));
-static void buffer_send(uint8_t byte, bool spin) __attribute__((unused));
-static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin) __attribute__((unused));
-static void buffer_send_bytes_P(const uint8_t *data, size_t len, bool spin) __attribute__((unused));
+static bool buffer_push(uint8_t byte);
+static uint8_t buffer_len(void);
+static uint8_t buffer_pop(void);
+static void enable_dre(void);
+static void disable_dre(void);
+static void buffer_send(uint8_t byte, bool spin, bool crc);
+static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin, bool crc);
 
 static void send_cmd(uint8_t addr, uint16_t cmd, const uint8_t *data, uint16_t datalen);
+
+static void crc_buffered_message(void);
 
 // Returns true on failure
 // Does NOT disable interrupts!
@@ -76,7 +80,7 @@ static void disable_dre(void)
     LOOP_USART.CTRLA = temp;
 }
 
-static void buffer_send(uint8_t byte, bool spin)
+static void buffer_send(uint8_t byte, bool spin, bool crc)
 {
     do {
         disable_dre();
@@ -85,32 +89,41 @@ static void buffer_send(uint8_t byte, bool spin)
             break;
         }
     } while (spin);
+    if (crc)
+        crc_process_byte(byte);
 }
 
-static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin)
+static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin, bool crc)
 {
     for (size_t i = 0; i < len; ++i) {
-        buffer_send(data[i], spin);
+        buffer_send(data[i], spin, crc);
     }
 }
 
-static void buffer_send_bytes_P(const uint8_t *data, size_t len, bool spin)
-{
-    for (size_t i = 0; i < len; ++i) {
-        buffer_send(pgm_read_byte(&data[i]), spin);
-    }
-}
-
+/**
+ * Warning: uses CRC! */
 static void send_cmd(uint8_t addr, uint16_t cmd, const uint8_t *data, uint16_t datalen)
 {
-    buffer_send(addr, true);
-    buffer_send(CMD_LO(cmd), true);
-    buffer_send(CMD_HI(cmd), true);
-    buffer_send(CMD_LO(datalen), true);
-    buffer_send(CMD_HI(datalen), true);
-    buffer_send_bytes(data, datalen, true);
-    buffer_send(0, true); // CRC
-    buffer_send(0, true); // CRC
+    crc_init();
+    buffer_send(addr, true, true);
+    buffer_send(CMD_LO(cmd), true, true);
+    buffer_send(CMD_HI(cmd), true, true);
+    buffer_send(CMD_LO(datalen), true, true);
+    buffer_send(CMD_HI(datalen), true, true);
+    buffer_send_bytes(data, datalen, true, true);
+    uint16_t crc = crc_get_checksum();
+    buffer_send(crc & 0xff, true, false); // CRC
+    buffer_send((crc & 0xff00) >> 8, true, false); // CRC
+}
+
+static void crc_buffered_message(void)
+{
+    crc_init();
+    crc_process_byte(LOOP_ADDR_BROADCAST);
+    crc_process_bytes((uint8_t*) LOOP_COMMAND_BYTES, 2);
+    crc_process_bytes((uint8_t*) LOOP_DATALEN_BYTES, 2);
+    crc_process_bytes((uint8_t*) LOOP_DATA_BUF, LOOP_DATALEN);
+    crc_process_bytes((uint8_t*) LOOP_CRC_BYTES, 2);
 }
 
 ISR(USARTD0_RXC_vect)
@@ -179,10 +192,12 @@ ISR(USARTD0_RXC_vect)
         break;
     case CRC_1:
         // data = data;
+        LOOP_CRC_BYTES[0] = data;
         state = CRC_0;
         break;
     case CRC_0:
         // data = data;
+        LOOP_CRC_BYTES[1] = data;
         state = FINISHED;
         break;
     default:
@@ -191,18 +206,31 @@ ISR(USARTD0_RXC_vect)
 
     switch (mode) {
     case PASSTHROUGH:
-        buffer_send(data, true);
+        buffer_send(data, /* spin */ true, /* crc */ false);
         break;
     case BROADCAST:
         if (state == FINISHED) {
             // Same as HANDLED, but on correct receipt of the message, retransmit
             // it instead of sending an ACK.
-            send_cmd(LOOP_ADDR_BROADCAST, LOOP_COMMAND, (uint8_t *) LOOP_DATA_BUF, data_buf_idx);
+
+            crc_buffered_message();
+            if (crc_is_checksum_zero()) {
+                send_cmd(LOOP_ADDR_BROADCAST, LOOP_COMMAND, (uint8_t *) LOOP_DATA_BUF, data_buf_idx);
+            } else {
+                uint16_t crc = crc_get_checksum();
+                send_cmd(LOOP_ADDR_RESPONSE, CMD_NACK_CRC, (uint8_t *) &crc, 2);
+            }
         }
         break;
     case HANDLED:
         if (state == FINISHED) {
-            send_cmd(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+            crc_buffered_message();
+            if (crc_is_checksum_zero()) {
+                send_cmd(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+            } else {
+                uint16_t crc = crc_get_checksum();
+                send_cmd(LOOP_ADDR_RESPONSE, CMD_NACK_CRC, (uint8_t *) &crc, 2);
+            }
         }
         break;
     }

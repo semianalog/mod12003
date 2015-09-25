@@ -2,6 +2,7 @@
 #define _LOOP_H
 
 #include "config.h"
+#include "misc.h"
 #include <inttypes.h>
 
 //  Interface code for MOD1 bus loop
@@ -24,8 +25,7 @@
 #define CMD_NACK_BUFLEN UINT16_C( 0x7001 )
 #define CMD_NACK_CRC    UINT16_C( 0x7002 )
 
-static void configure_loop(void) __attribute__((unused));
-static void configure_loop(void)
+UNUSED( static void configure_loop(void) )
 {
     LOOP_USART.CTRLA = 0
         | USART_DRIE_bm
