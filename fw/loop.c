@@ -21,6 +21,7 @@ static volatile uint8_t LOOP_BUFFER_TAIL = 0;
 // size; the size is defined in loop.h
 volatile uint8_t LOOP_DATA_BUF[LOOP_DATA_BUF_SIZE];
 
+volatile uint8_t LOOP_ADDRESS;
 volatile uint16_t LOOP_COMMAND;
 volatile uint8_t *LOOP_COMMAND_BYTES = (volatile uint8_t *) &LOOP_COMMAND;
 volatile uint16_t LOOP_DATALEN;
@@ -112,14 +113,14 @@ static void send_cmd(uint8_t addr, uint16_t cmd, const uint8_t *data, uint16_t d
     buffer_send(CMD_HI(datalen), true, true);
     buffer_send_bytes(data, datalen, true, true);
     uint16_t crc = crc_get_checksum();
-    buffer_send(crc & 0xff, true, false); // CRC
     buffer_send((crc & 0xff00) >> 8, true, false); // CRC
+    buffer_send((crc & 0x00ff), true, false); // CRC
 }
 
 static void crc_buffered_message(void)
 {
     crc_init();
-    crc_process_byte(LOOP_ADDR_BROADCAST);
+    crc_process_byte(LOOP_ADDRESS);
     crc_process_bytes((uint8_t*) LOOP_COMMAND_BYTES, 2);
     crc_process_bytes((uint8_t*) LOOP_DATALEN_BYTES, 2);
     crc_process_bytes((uint8_t*) LOOP_DATA_BUF, LOOP_DATALEN);
@@ -143,6 +144,7 @@ ISR(USARTD0_RXC_vect)
 
     switch(state) {
     case ADDRESS:
+        LOOP_ADDRESS = data;
         if (data == LOOP_ADDR_RESPONSE) {
             mode = PASSTHROUGH;
         } else if (data == LOOP_ADDR_BROADCAST) {

@@ -28,7 +28,8 @@ uint16_t get_adc_result(uint8_t n);
  */
 UNUSED( static void crc_init(void) )
 {
-    CRC.CTRL = CRC_RESET_RESET1_gc | CRC_SOURCE_IO_gc;
+    CRC.CTRL = CRC_RESET_RESET1_gc;
+    CRC.CTRL = CRC_SOURCE_IO_gc;
 }
 
 /**
@@ -44,10 +45,8 @@ UNUSED( static void crc_process_byte(uint8_t byte) )
  */
 UNUSED( static void crc_process_bytes(const uint8_t* bytes, size_t n) )
 {
-    while (n) {
-        crc_process_byte(*bytes);
-        ++bytes;
-        --n;
+    for (size_t i = 0; i < n; ++i) {
+        crc_process_byte(bytes[i]);
     }
 }
 
@@ -57,8 +56,10 @@ UNUSED( static void crc_process_bytes(const uint8_t* bytes, size_t n) )
 UNUSED( static uint16_t crc_get_checksum(void) )
 {
     CRC.STATUS |= CRC_BUSY_bm;
-    while (!(CRC.STATUS & CRC_BUSY_bm));
-    return CRC.CHECKSUM1 << 8 | CRC.CHECKSUM0;
+    while (CRC.STATUS & CRC_BUSY_bm);
+    uint16_t checksum = ((uint16_t) CRC.CHECKSUM0) & 0xff;
+    checksum |= ((uint16_t) CRC.CHECKSUM1 << 8) & 0xff00;
+    return checksum;
 }
 
 /**
@@ -67,7 +68,7 @@ UNUSED( static uint16_t crc_get_checksum(void) )
 UNUSED( static bool crc_is_checksum_zero(void) )
 {
     CRC.STATUS |= CRC_BUSY_bm;
-    while (!(CRC.STATUS & CRC_BUSY_bm));
+    while (CRC.STATUS & CRC_BUSY_bm);
     return CRC.STATUS & CRC_ZERO_bm;
 }
 
