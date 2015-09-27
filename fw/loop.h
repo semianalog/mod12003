@@ -4,6 +4,7 @@
 #include "config.h"
 #include "misc.h"
 #include <inttypes.h>
+#include <avr/pgmspace.h>
 
 //  Interface code for MOD1 bus loop
 
@@ -18,9 +19,37 @@
 #define LOOP_DREINTLVL USART_DREINTLVL_MED_gc
 
 
-#define CMD_ACK         UINT16_C( 0x70 )
-#define CMD_NACK_BUFLEN UINT16_C( 0x71 )
-#define CMD_NACK_CRC    UINT16_C( 0x72 )
+#define CMD_NOP         0x00
+#define CMD_IDN         0x01
+#define CMD_ACK         0x70
+#define CMD_NACK_BUFLEN 0x71
+#define CMD_NACK_CRC    0x72
+#define CMD_NACK_NO_CMD 0x73
+
+/* Jump table, one per command */
+extern void (* const CMD_HANDLERS[256])() PROGMEM;
+
+/* Data from the received message. The handlers can read this. */
+extern volatile uint8_t LOOP_ADDRESS;
+extern volatile uint8_t LOOP_COMMAND;
+extern volatile uint16_t LOOP_DATALEN;
+extern volatile uint8_t LOOP_DATA_BUF[LOOP_DATA_BUF_SIZE];
+extern volatile uint16_t LOOP_CRC;
+
+/**
+ * Send a command/message on the loop. Handlers can use this for responses.
+ *
+ * Warning: If calling from the main loop, MASK INTERRUPTS FIRST! This makes use of the
+ * hardware CRC module. Do NOT use this from an interrupt level above LOOP_RXCINTLVL.
+ *
+ * @param addr - Destination address
+ * @param cmd  - Command ID
+ * @param data - Block of data to send. Can be NULL iff datalen == 0
+ * @param datalen - Length of data to send
+ */
+void send_cmd(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
+
+void send_cmd_P(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
 
 UNUSED( static void configure_loop(void) )
 {

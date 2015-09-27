@@ -50,3 +50,4 @@ else:
 
 print()
 print(list(hex(i) for i in Rdata))
+print(Rdata)

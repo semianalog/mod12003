@@ -5,6 +5,8 @@
 
 #include <avr/io.h>
 
+#define IDN_STR "c4757p,MOD12003"
+
 // Loop USART, port D, 115200
 #define LOOP_USART  USARTD0
 #define LOOP_PORT   PORTD

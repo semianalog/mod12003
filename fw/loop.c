@@ -36,8 +36,6 @@ static void disable_dre(void);
 static void buffer_send(uint8_t byte, bool spin, bool crc);
 static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin, bool crc);
 
-static void send_cmd(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
-
 static void crc_buffered_message(void);
 
 // Returns true on failure
@@ -100,16 +98,30 @@ static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin, bool c
     }
 }
 
-/**
- * Warning: uses CRC! */
-static void send_cmd(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen)
+static void send_cmd_stub(uint8_t addr, uint8_t cmd, uint16_t datalen)
 {
     crc_init();
     buffer_send(addr, true, true);
     buffer_send(cmd, true, true);
     buffer_send(datalen & 0xff, true, true);
     buffer_send((datalen >> 8) & 0xff, true, true);
+}
+
+void send_cmd(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen)
+{
+    send_cmd_stub(addr, cmd, datalen);
     buffer_send_bytes(data, datalen, true, true);
+    uint16_t crc = crc_get_checksum();
+    buffer_send((crc & 0xff00) >> 8, true, false); // CRC
+    buffer_send((crc & 0x00ff), true, false); // CRC
+}
+
+void send_cmd_P(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen)
+{
+    send_cmd_stub(addr, cmd, datalen);
+    for (size_t i = 0; i < datalen; ++i) {
+        buffer_send(pgm_read_byte(&data[i]), true, true);
+    }
     uint16_t crc = crc_get_checksum();
     buffer_send((crc & 0xff00) >> 8, true, false); // CRC
     buffer_send((crc & 0x00ff), true, false); // CRC
@@ -221,7 +233,12 @@ ISR(USARTD0_RXC_vect)
         if (state == FINISHED) {
             crc_buffered_message();
             if (crc_is_checksum_zero()) {
-                send_cmd(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+                void (*handler)() = pgm_read_ptr(&CMD_HANDLERS[LOOP_COMMAND]);
+                if (handler) {
+                    handler();
+                } else {
+                    send_cmd(LOOP_ADDR_RESPONSE, CMD_NACK_NO_CMD, NULL, 0);
+                }
             } else {
                 uint16_t crc = crc_get_checksum();
                 send_cmd(LOOP_ADDR_RESPONSE, CMD_NACK_CRC, (uint8_t *) &crc, 2);
