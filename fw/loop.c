@@ -22,8 +22,7 @@ static volatile uint8_t LOOP_BUFFER_TAIL = 0;
 volatile uint8_t LOOP_DATA_BUF[LOOP_DATA_BUF_SIZE];
 
 volatile uint8_t LOOP_ADDRESS;
-volatile uint16_t LOOP_COMMAND;
-volatile uint8_t *LOOP_COMMAND_BYTES = (volatile uint8_t *) &LOOP_COMMAND;
+volatile uint8_t LOOP_COMMAND;
 volatile uint16_t LOOP_DATALEN;
 volatile uint8_t *LOOP_DATALEN_BYTES = (volatile uint8_t *) &LOOP_DATALEN;
 volatile uint16_t LOOP_CRC;
@@ -37,7 +36,7 @@ static void disable_dre(void);
 static void buffer_send(uint8_t byte, bool spin, bool crc);
 static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin, bool crc);
 
-static void send_cmd(uint8_t addr, uint16_t cmd, const uint8_t *data, uint16_t datalen);
+static void send_cmd(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
 
 static void crc_buffered_message(void);
 
@@ -103,14 +102,13 @@ static void buffer_send_bytes(const uint8_t *data, size_t len, bool spin, bool c
 
 /**
  * Warning: uses CRC! */
-static void send_cmd(uint8_t addr, uint16_t cmd, const uint8_t *data, uint16_t datalen)
+static void send_cmd(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen)
 {
     crc_init();
     buffer_send(addr, true, true);
-    buffer_send(CMD_LO(cmd), true, true);
-    buffer_send(CMD_HI(cmd), true, true);
-    buffer_send(CMD_LO(datalen), true, true);
-    buffer_send(CMD_HI(datalen), true, true);
+    buffer_send(cmd, true, true);
+    buffer_send(datalen & 0xff, true, true);
+    buffer_send((datalen >> 8) & 0xff, true, true);
     buffer_send_bytes(data, datalen, true, true);
     uint16_t crc = crc_get_checksum();
     buffer_send((crc & 0xff00) >> 8, true, false); // CRC
@@ -121,7 +119,7 @@ static void crc_buffered_message(void)
 {
     crc_init();
     crc_process_byte(LOOP_ADDRESS);
-    crc_process_bytes((uint8_t*) LOOP_COMMAND_BYTES, 2);
+    crc_process_byte(LOOP_COMMAND);
     crc_process_bytes((uint8_t*) LOOP_DATALEN_BYTES, 2);
     crc_process_bytes((uint8_t*) LOOP_DATA_BUF, LOOP_DATALEN);
     crc_process_bytes((uint8_t*) LOOP_CRC_BYTES, 2);
@@ -133,7 +131,7 @@ ISR(USARTD0_RXC_vect)
     static uint16_t data_buf_idx = 0;
 
     enum recv_state {
-        ADDRESS, COMMAND_1, COMMAND_0, DATALEN_1, DATALEN_0, DATA, CRC_1, CRC_0, FINISHED };
+        ADDRESS, COMMAND, DATALEN_1, DATALEN_0, DATA, CRC_1, CRC_0, FINISHED };
     static enum recv_state state = ADDRESS;
 
     enum resp_mode {
@@ -156,16 +154,11 @@ ISR(USARTD0_RXC_vect)
             mode = HANDLED;
             data = LOOP_ADDR_RESPONSE;
         }
-        state = COMMAND_1;
+        state = COMMAND;
         break;
-    case COMMAND_1:
+    case COMMAND:
         // data = data;
-        LOOP_COMMAND_BYTES[0] = data;
-        state = COMMAND_0;
-        break;
-    case COMMAND_0:
-        // data = data;
-        LOOP_COMMAND_BYTES[1] = data;
+        LOOP_COMMAND = data;
         state = DATALEN_1;
         break;
     case DATALEN_1:

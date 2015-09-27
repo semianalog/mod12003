@@ -18,12 +18,9 @@
 #define LOOP_DREINTLVL USART_DREINTLVL_MED_gc
 
 
-#define CMD_HI(c) (((c) & 0xff00) >> 8)
-#define CMD_LO(c) ((c) & 0xff)
-
-#define CMD_ACK         UINT16_C( 0x7000 )
-#define CMD_NACK_BUFLEN UINT16_C( 0x7001 )
-#define CMD_NACK_CRC    UINT16_C( 0x7002 )
+#define CMD_ACK         UINT16_C( 0x70 )
+#define CMD_NACK_BUFLEN UINT16_C( 0x71 )
+#define CMD_NACK_CRC    UINT16_C( 0x72 )
 
 UNUSED( static void configure_loop(void) )
 {
