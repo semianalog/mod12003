@@ -20,12 +20,21 @@
 #define LOOP_DREINTLVL USART_DREINTLVL_MED_gc
 
 
-#define CMD_NOP         0x00
-#define CMD_IDN         0x01
+#define CMD_NOP         0x00    // NOP
+#define CMD_IDN         0x01    // return model number/identifier string
+#define CMD_SERIAL      0x02    // return serial number string - must be unique for same IDN
+#define CMD_COUNT       0x10    // see CMD_COUNT below
 #define CMD_ACK         0x70
 #define CMD_NACK_BUFLEN 0x71
 #define CMD_NACK_CRC    0x72
 #define CMD_NACK_NO_CMD 0x73
+
+/* CMD_COUNT
+ * Used to count the number of devices on the loop. This is send to the first device
+ * (address zero), which should then increment the 8-bit number in the data block and
+ * send it to the next device. When it comes back around, it will contain the number
+ * of devices on the loop.
+ */
 
 /* Jump table, one per command */
 extern void (* const CMD_HANDLERS[256])() PROGMEM;

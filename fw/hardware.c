@@ -72,3 +72,14 @@ ISR(ADCA_CH0_vect)
     ADCA.CH0.MUXCTRL = ADC_CH(channel);
     ADCA.CH0.CTRL |= ADC_CH_START_bm;
 }
+
+uint8_t read_prodsig(uint8_t idx)
+{
+    uint8_t result;
+    cli();
+    NVM_CMD = NVM_CMD_READ_CALIB_ROW_gc;
+    result = pgm_read_byte(idx);
+    NVM_CMD = NVM_CMD_NO_OPERATION_gc;
+    sei();
+    return result;
+}

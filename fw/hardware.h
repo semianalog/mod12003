@@ -21,6 +21,20 @@ void configure_adc(void);
 uint16_t get_adc_result(uint8_t n);
 
 /**
+ * Read from the production signatures row.
+ *
+ * @param idx - Index within the row. Get from offsetof(NVM_PROD_SIGNATURES_t, item)
+ */
+uint8_t read_prodsig(uint8_t idx);
+
+/**
+ * Read from the production signatures row. Computes offsetof automatically.
+ *
+ * @param item - Item to read, like WAFNUM
+ */
+#define READ_PRODSIG(item) read_prodsig(offsetof(NVM_PROD_SIGNATURES_t, item))
+
+/**
  * Initialize the CRC module to perform an operation. After initialization, you
  * can send data to it with crc_process_byte() and crc_process_bytes(). Note that
  * the CRC module is global and stateful: you cannot use it if it is being used
