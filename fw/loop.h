@@ -5,6 +5,7 @@
 #include "misc.h"
 #include <inttypes.h>
 #include <avr/pgmspace.h>
+#include <stdbool.h>
 
 //  Interface code for MOD1 bus loop
 
@@ -29,15 +30,24 @@
 /* Jump table, one per command */
 extern void (* const CMD_HANDLERS[256])() PROGMEM;
 
-/* Data from the received message. The handlers can read this. */
-extern volatile uint8_t LOOP_ADDRESS;
-extern volatile uint8_t LOOP_COMMAND;
-extern volatile uint16_t LOOP_DATALEN;
-extern volatile uint8_t LOOP_DATA_BUF[LOOP_DATA_BUF_SIZE];
-extern volatile uint16_t LOOP_CRC;
+/**
+ * A messsage received on the loop.
+ */
+struct loop_msg {
+    uint8_t addr;
+    uint8_t cmd;
+    uint16_t datalen;
+    uint8_t data[LOOP_DATA_BUF_SIZE];
+    uint16_t crc;
+};
 
 /**
- * Send a command/message on the loop. Handlers can use this for responses.
+ * The last message received.
+ */
+extern volatile struct loop_msg g_loop_msg;
+
+/**
+ * Send a message on the loop. Handlers can use this for responses.
  *
  * Warning: If calling from the main loop, MASK INTERRUPTS FIRST! This makes use of the
  * hardware CRC module. Do NOT use this from an interrupt level above LOOP_RXCINTLVL.
@@ -47,9 +57,40 @@ extern volatile uint16_t LOOP_CRC;
  * @param data - Block of data to send. Can be NULL iff datalen == 0
  * @param datalen - Length of data to send
  */
-void send_cmd(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
+void send_msg(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
 
-void send_cmd_P(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
+void send_msg_P(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen);
+
+/******************************************************************************
+ * Low-level functions
+ */
+
+/**
+ * Push a byte to the buffer and trigger a transmission. This does clear and set the
+ * interrupts, and must not run from the same interrupt level as LOOP_DREINTLVL.
+ *
+ * This function will spin until the buffer is ready, so do not call it if the
+ * USART is not enabled or the DRE interrupt will not run for any reason. It will
+ * result in a deadlock in that case.
+ *
+ * @param byte - the byte to send
+ * @param crc - iff true, also push the byte to the CRC peripheral
+ */
+void buffer_send(uint8_t byte, bool crc);
+
+/**
+ * Transmit multiple bytes. This does clear and set the interrupts, and must not be
+ * run from the same interrupt level as LOOP_DREINTLVL.
+ *
+ * This function will spin until the buffer is ready, so do not call it if the
+ * USART is not enabled or the DRE interrupt will not run for any reason. It will
+ * result in a deadlock in that case.
+ *
+ * @param data - the data to send
+ * @param len - length of the data
+ * @param crc - iff true, also push the data to the CRC peripheral
+ */
+void buffer_send_bytes(const uint8_t *data, size_t len, bool crc);
 
 UNUSED( static void configure_loop(void) )
 {

@@ -5,12 +5,12 @@
 
 static void cmd_nop()
 {
-    send_cmd(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }
 
 static void cmd_idn()
 {
-    send_cmd_P(LOOP_ADDR_RESPONSE, CMD_ACK, (const uint8_t *) PSTR(IDN_STR), sizeof(IDN_STR) - 1);
+    send_msg_P(LOOP_ADDR_RESPONSE, CMD_ACK, (const uint8_t *) PSTR(IDN_STR), sizeof(IDN_STR) - 1);
 }
 
 void (* const CMD_HANDLERS[256])() PROGMEM = {
