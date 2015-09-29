@@ -14,6 +14,15 @@
 #define LOOP_BSEL   131
 #define LOOP_BSCALE -3
 
+// For bb_i2c_master
+#define I2C_PORT_SCL    PORTD
+#define I2C_VPORT_SCL   VPORT3
+#define I2C_BIT_SCL     1
+#define I2C_PORT_SDA    PORTD
+#define I2C_VPORT_SDA   VPORT3
+#define I2C_BIT_SDA     0
+#define I2C_FREQ        400e3
+
 // #include "usart_driver.h"
 
 // extern USART_data_t usart_data;

@@ -11,7 +11,7 @@
 #include "hardware.h"
 #include "loop.h"
 #include "usart_stdio.h"
-
+#include "psu.h"
 
 static void configure_clock(void)
 {
@@ -55,6 +55,8 @@ int main(void)
 
     configure_clock();
     configure_pins();
+    configure_i2c();
+    configure_i2cdac();
 
     configure_dac();
     configure_adc();
@@ -67,57 +69,7 @@ int main(void)
         | PMIC_LOLVLEN_bm;
     sei();
 
-    for(;;);
-
-#if 0
-    char buffer[512] = {0};
     for(;;) {
-        unsigned i;
-        for (i = 0; i < (sizeof(buffer) - 1) || i == UINT_MAX; ++i) {
-            int c = getchar();
-            if (c < 0) {
-                --i;
-                continue;
-            }
-            if (c == '\b' || c == '\177') {
-                if (i) i -= 2;
-                putchar('\b');
-            } else {
-                putchar(c);
-                buffer[i] = (char) c;
-                if (c == '\n')
-                    break;
-            }
-        }
-        buffer[i] = 0;
-
-        if (!strncmp_P(buffer, PSTR("iset "), sizeof("iset ") - 1)) {
-            uint16_t val = atoi(buffer + sizeof("iset ") - 1);
-            set_iset_dac(val);
-            printf_P(PSTR("set iset DAC to: %"PRIu16"\n"), val);
-
-        } else if (!strncmp_P(buffer, PSTR("adc "), sizeof("adc ") - 1)) {
-            int n = atoi(buffer + sizeof("adc ") - 1);
-            if (n < 0 || n > 15) {
-                puts_P(PSTR("invalid ADC channel"));
-            } else {
-                printf_P(PSTR("ADC %d: %"PRIu16"\n"), n, get_adc_result((uint8_t)n));
-            }
-
-        } else if (!strncmp_P(buffer, PSTR("sadc "), sizeof("sadc ") - 1)) {
-            int n = atoi(buffer + sizeof("adc ") - 1);
-            if (n < 0 || n > 15) {
-                puts_P(PSTR("invalid ADC channel"));
-            } else {
-                for (;;) {
-                    printf_P(PSTR("ADC %d: %"PRIu16"\n"), n, get_adc_result((uint8_t)n));
-                    _delay_ms(500);
-                    if (getchar() == '\n') {
-                        break;
-                    }
-                }
-            }
-        }
+        psu_control_step();
     }
-#endif
 }

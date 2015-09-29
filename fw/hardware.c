@@ -1,5 +1,7 @@
 #include "config.h"
 #include "hardware.h"
+#include "pins.h"
+#include "misc.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -82,4 +84,26 @@ uint8_t read_prodsig(uint8_t idx)
     NVM_CMD = NVM_CMD_NO_OPERATION_gc;
     sei();
     return result;
+}
+
+
+void configure_i2cdac(void)
+{
+    // Config bits: reset to 0V, not powered down
+    uint8_t buffer[3] = {
+        0x08,   /* command: USER_CONFIG */
+        0x00,   /* high byte: don't care */
+        0x10,   /* low byte: reset to 0V, not powered down */
+    };
+    i2c_transfer(I2CDAC_ADDR, buffer, sizeof(buffer), 0);
+}
+
+void i2cdac_set(uint16_t value)
+{
+    uint8_t buffer[3] = {
+        0x01,   /* command: CODE_LOAD */
+        U16_HI(value),
+        U16_LO(value),
+    };
+    i2c_transfer(I2CDAC_ADDR, buffer, sizeof(buffer), 0);
 }

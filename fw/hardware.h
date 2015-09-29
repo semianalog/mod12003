@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "bb_i2c_master.h"
 
 // ADC positive mux bitmasks
 #define ADC_CH(n)   ((n) << ADC_CH_MUXPOS_gp)
@@ -85,5 +86,14 @@ UNUSED( static bool crc_is_checksum_zero(void) )
     while (CRC.STATUS & CRC_BUSY_bm);
     return CRC.STATUS & CRC_ZERO_bm;
 }
+
+
+/******************************************************************************
+ * MAX5215 I2C DAC. Requires i2c_master or bb_i2c_master.
+ */
+#define I2CDAC_ADDR 0x38
+
+void configure_i2cdac(void);
+void i2cdac_set(uint16_t value);
 
 #endif // _HARDWARE_H
