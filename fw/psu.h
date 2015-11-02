@@ -14,4 +14,11 @@
  */
 bool psu_vset(uint16_t mv);
 
+/**
+ * Get the output voltage.
+ *
+ * @return output voltage in mv
+ */
+uint16_t psu_vget(void);
+
 #endif // _PSU_H

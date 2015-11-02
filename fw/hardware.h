@@ -22,6 +22,22 @@ bool vdac_set(uint16_t value);
 
 void adc_init(void);
 
+/**
+ * Returns true if a reading was stored, or false if just waiting.
+ */
+bool adc_cycle(void);
+
+/**
+ * Cycle ADC until it has run a full scan, blocking until it has.
+ */
+void adc_scan(void);
+
+/**
+ * Sample a given channel N times and return the sum. Performs full scans
+ * until enough acquisitions have been made.
+ */
+uint32_t adc_sample_n(uint8_t channel, uint16_t times);
+
 uint16_t get_adc_result(uint8_t n);
 
 /**

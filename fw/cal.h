@@ -7,8 +7,10 @@
 /******************************************************************************
  * Calibration constants
  */
-extern uint32_t EEMEM   CAL_C_VSLOPE;
-extern uint16_t EEMEM   CAL_C_VOFFSET; // stored signed
+extern uint32_t EEMEM   CAL_C_VDACSLOPE;
+extern uint16_t EEMEM   CAL_C_VDACOFFSET; // stored signed
+extern uint32_t EEMEM   CAL_C_VADCSLOPE;
+extern uint16_t EEMEM   CAL_C_VADCOFFSET; // stored signed
 
 /******************************************************************************
  * Types used internally by the calibration system

@@ -22,6 +22,8 @@ int main(void)
     afw_pins_init();
     afw_int_enable(0);
 
+    adc_init();
+
     vdac_init();
     vdac_set(0x4000uL);
 
@@ -39,5 +41,6 @@ int main(void)
     for(;;) {
         PTGL(P_LEDCV);
         cal_run();
+        adc_cycle();
     }
 }

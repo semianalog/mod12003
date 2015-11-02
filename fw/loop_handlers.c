@@ -49,10 +49,16 @@ static void cmd_count()
 
 static void cmd_set_voltage(void)
 {
-    //temporary: just set the DAC word
     uint16_t millivolts = U8_to_U16(g_loop_msg.data[0], g_loop_msg.data[1]);
     psu_vset(millivolts);
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+}
+
+static void cmd_q_voltage(void)
+{
+    uint16_t mv = psu_vget();
+    uint8_t buffer[2] = {U16_BYTE(mv, 0), U16_BYTE(mv, 1)};
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, 2);
 }
 
 void (* const __flash CMD_HANDLERS[256])() = {
@@ -61,7 +67,9 @@ void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_SERIAL] = &cmd_serial,
     [CMD_COUNT] = &cmd_count,
     [CMD_ACK] = &cmd_nop,
+
     [CMD_SET_VOLTAGE] = &cmd_set_voltage,
+    [CMD_QVOLTAGE]   = &cmd_q_voltage,
 
     [CMD_CAL_COUNT]  = &cmd_cal_count,
     [CMD_CAL_SELECT] = &cmd_cal_select,

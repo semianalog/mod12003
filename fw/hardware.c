@@ -28,9 +28,12 @@
 #define MAXDAC_PWR_1k_bm        0x03
 
 static const __flash uint8_t ADC_CHANNELS[] = {
-    ADC_REFGND, ADC_ISENSE, ADC_VSENSE, ADC_TEMP, ADC_PREREG, 255 };
+    ADC_REFGND, ADC_ISENSE, ADC_VSENSE, ADC_TEMP, ADC_PREREG };
 
-static volatile uint16_t _ADC_RESULTS[16] = {0};
+const uint8_t N_ADC_CHANNELS = sizeof(ADC_CHANNELS) / sizeof(ADC_CHANNELS[0]);
+
+static volatile uint16_t gs_adc_results[16] = {0};
+static volatile uint8_t gs_adc_channel_idx = 0;
 
 void idac_init(void)
 {
@@ -63,7 +66,7 @@ bool vdac_set(uint16_t value)
     return MAXDAC_TWI.transact(MAXDAC_ADDR, buffer, 3, 0) != TWI_GOOD;
 }
 
-void configure_adc(void)
+void adc_init(void)
 {
     ADCA.CTRLA = 0;
     ADCA.CTRLB = ADC_RESOLUTION_MT12BIT_gc;
@@ -75,39 +78,61 @@ void configure_adc(void)
 
     _delay_us(400);
 
-    ADCA.CH0.INTCTRL = 1;   // Low-level interrupt
+    gs_adc_channel_idx = 0;
     ADCA.CH0.CTRL = ADC_CH_GAIN_1X_gc || ADC_CH_INPUTMODE_SINGLEENDED_gc;
     ADCA.CH0.AVGCTRL = ADC_SAMPNUM_8X_gc;
     ADCA.CH0.MUXCTRL = ADC_CH(0);
+    ADCA.CH0.INTFLAGS = ADC_CH_IF_bm;
     ADCA.CH0.CTRL |= ADC_CH_START_bm;
+}
+
+bool adc_cycle(void)
+{
+    if (!(ADCA.CH0.INTFLAGS & ADC_CH_IF_bm)) {
+        return false;
+    }
+    ADCA.CH0.INTFLAGS = ADC_CH_IF_bm;
+
+    uint8_t channel = ADC_CHANNELS[gs_adc_channel_idx];
+
+    gs_adc_results[channel] = ADCA.CH0RES;
+
+    gs_adc_channel_idx = (gs_adc_channel_idx + 1) % N_ADC_CHANNELS;
+
+    ADCA.CH0.MUXCTRL = ADC_CH(ADC_CHANNELS[gs_adc_channel_idx]);
+    ADCA.CH0.CTRL |= ADC_CH_START_bm;
+
+    return true;
+}
+
+void adc_scan(void)
+{
+    uint8_t n = 0;
+    while (n < N_ADC_CHANNELS) {
+        bool got_result = adc_cycle();
+        if (got_result) {
+            ++n;
+        }
+    }
+}
+
+uint32_t adc_sample_n(uint8_t channel, uint16_t times)
+{
+    uint32_t sum = 0;
+    for (uint16_t i = 0; i < times; ++i) {
+        adc_scan();
+        sum += get_adc_result(channel);
+    }
+    return sum;
 }
 
 uint16_t get_adc_result(uint8_t n)
 {
     uint16_t result = 0;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        result = _ADC_RESULTS[n];
+        result = gs_adc_results[n];
     }
     return result;
-}
-
-#include <stdio.h>
-ISR(ADCA_CH0_vect)
-{
-    static uint8_t channel_idx = 0;
-    static uint8_t channel = ADC_REFGND;
-
-    _ADC_RESULTS[channel] = ADCA.CH0RES;
-
-    ++channel_idx;
-    channel = ADC_CHANNELS[channel_idx];
-    if (channel == 255) {
-        channel_idx = 0;
-        channel = ADC_CHANNELS[channel_idx];
-    }
-
-    ADCA.CH0.MUXCTRL = ADC_CH(channel);
-    ADCA.CH0.CTRL |= ADC_CH_START_bm;
 }
 
 uint8_t read_prodsig(uint8_t idx)
