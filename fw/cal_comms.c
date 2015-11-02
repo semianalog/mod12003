@@ -5,9 +5,8 @@
 
 void cmd_cal_count(void)
 {
-    char buffer[2];
-    U8_to_U16(buffer) = N_CAL_ROUTINES;
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) buffer, 2);
+    uint8_t buffer[2] = { READ_U16_BYTE(N_CAL_ROUTINES, 0), READ_U16_BYTE(N_CAL_ROUTINES, 1) };
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, 2);
 }
 
 void cmd_cal_select(void)
@@ -44,7 +43,9 @@ void cmd_cal_status(void)
 
 void cmd_cal_user(void)
 {
-    g_user_data = *(int32_t *)(&g_loop_msg.data);
+    uint32_t user_data_u32 = U8_to_U32(
+            g_loop_msg.data[0], g_loop_msg.data[1], g_loop_msg.data[2], g_loop_msg.data[3]);
+    g_user_data = (int32_t) user_data_u32;
     g_cal_cmd = CAL_USER;
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }

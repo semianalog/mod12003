@@ -134,8 +134,8 @@ static void send_msg_header(uint8_t addr, uint8_t cmd, uint16_t datalen)
     crc_init();
     buffer_send(addr, true);
     buffer_send(cmd, true);
-    buffer_send(U16_LO(datalen), true);
-    buffer_send(U16_HI(datalen), true);
+    buffer_send(READ_U16_BYTE(datalen, 0), true);
+    buffer_send(READ_U16_BYTE(datalen, 1), true);
 }
 
 /**
@@ -143,8 +143,8 @@ static void send_msg_header(uint8_t addr, uint8_t cmd, uint16_t datalen)
  */
 static void send_checksum(void) {
     uint16_t crc = crc_get_checksum();
-    buffer_send(U16_HI(crc), false);
-    buffer_send(U16_LO(crc), false);
+    buffer_send(READ_U16_BYTE(crc, 1), false);
+    buffer_send(READ_U16_BYTE(crc, 0), false);
 }
 
 void send_msg(uint8_t addr, uint8_t cmd, const uint8_t *data, uint16_t datalen)

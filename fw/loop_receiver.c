@@ -74,12 +74,12 @@ LOOP_UART_RXCINT()
         break;
     case DATALEN_1:
         // data = data;
-        U16_LO(g_loop_msg.datalen) = gs_data;
+        U16_BYTE(g_loop_msg.datalen, 0) = gs_data;
         gs_state = DATALEN_0;
         break;
     case DATALEN_0:
         // data = data;
-        U16_HI(g_loop_msg.datalen) = gs_data;
+        U16_BYTE(g_loop_msg.datalen, 1) = gs_data;
         gs_data_idx = 0;
         if (g_loop_msg.datalen) {
             gs_state = DATA;
@@ -98,12 +98,12 @@ LOOP_UART_RXCINT()
         break;
     case CRC_1:
         // data = data;
-        U16_LO(g_loop_msg.crc) = gs_data;
+        U16_BYTE(g_loop_msg.crc, 0) = gs_data;
         gs_state = CRC_0;
         break;
     case CRC_0:
         // data = data;
-        U16_HI(g_loop_msg.crc) = gs_data;
+        U16_BYTE(g_loop_msg.crc, 1) = gs_data;
         gs_state = FINISHED;
         break;
     default:

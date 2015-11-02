@@ -27,7 +27,7 @@
 #define MAXDAC_PWR_100k_bm      0x02
 #define MAXDAC_PWR_1k_bm        0x03
 
-static const uint8_t PROGMEM ADC_CHANNELS[] = {
+static const __flash uint8_t ADC_CHANNELS[] = {
     ADC_REFGND, ADC_ISENSE, ADC_VSENSE, ADC_TEMP, ADC_PREREG, 255 };
 
 static volatile uint16_t _ADC_RESULTS[16] = {0};
@@ -35,8 +35,8 @@ static volatile uint16_t _ADC_RESULTS[16] = {0};
 void idac_init(void)
 {
     // Copy factory calibration
-    DACA.CH0GAINCAL = PRODSIGNATURES_DACA0GAINCAL;
-    DACA.CH0OFFSETCAL = PRODSIGNATURES_DACA0OFFCAL;
+    DACA.CH0GAINCAL = READ_PRODSIG(DACA0GAINCAL);
+    DACA.CH0OFFSETCAL = READ_PRODSIG(DACA0OFFCAL);
 
     DACA.CTRLA = DAC_CH0EN_bm | DAC_LPMODE_bm;
     DACA.CTRLC = DAC_REFSEL1_bm;
@@ -59,7 +59,7 @@ bool vdac_init(void)
 
 bool vdac_set(uint16_t value)
 {
-    uint8_t buffer[3] = {MAXDAC_CODE_LOAD, U16_HI(value), U16_LO(value)};
+    uint8_t buffer[3] = {MAXDAC_CODE_LOAD, U16_BYTE(value, 1), U16_BYTE(value, 0)};
     return MAXDAC_TWI.transact(MAXDAC_ADDR, buffer, 3, 0) != TWI_GOOD;
 }
 
@@ -70,7 +70,7 @@ void configure_adc(void)
     ADCA.REFCTRL = ADC_REFSEL1_bm;  /* port A VREF */
     ADCA.PRESCALER =ADC_PRESCALER_DIV32_gc;
     ADCA.SAMPCTRL = 0x3f;   /* maximum sampling time */
-    ADCA.CAL = ((uint16_t) PRODSIGNATURES_ADCACAL1) << 8  |  PRODSIGNATURES_ADCACAL0;
+    ADCA.CAL = ((uint16_t) READ_PRODSIG(ADCACAL1)) << 8  |  READ_PRODSIG(ADCACAL0);
     ADCA.CTRLA = ADC_ENABLE_bm;
 
     _delay_us(400);
@@ -100,10 +100,10 @@ ISR(ADCA_CH0_vect)
     _ADC_RESULTS[channel] = ADCA.CH0RES;
 
     ++channel_idx;
-    channel = pgm_read_byte(&ADC_CHANNELS[channel_idx]);
+    channel = ADC_CHANNELS[channel_idx];
     if (channel == 255) {
         channel_idx = 0;
-        channel = pgm_read_byte(&ADC_CHANNELS[channel_idx]);
+        channel = ADC_CHANNELS[channel_idx];
     }
 
     ADCA.CH0.MUXCTRL = ADC_CH(channel);
@@ -120,5 +120,4 @@ uint8_t read_prodsig(uint8_t idx)
     }
     return result;
 }
-
 

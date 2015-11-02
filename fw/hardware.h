@@ -1,5 +1,8 @@
+// This file contains hardware support for both MCU hardware not supported
+// by AFW, and external hardware.
+
 #ifndef _HARDWARE_H
-#define _HARDWARE_H 1
+#define _HARDWARE_H
 
 #include "config.h"
 #include <afw/misc.h>
