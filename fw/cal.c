@@ -1,6 +1,6 @@
 #include "cal.h"
 #include "loop.h"
-#include "dac.h"
+#include "hardware.h"
 #include <afw/misc.h>
 #include <afw/pins.h>
 #include <string.h>
@@ -80,10 +80,10 @@ static void CAL_FUNCTION_VSENSE(void)
         g_cal_status.msg_len = 0;
     }
 
-    maxdac_set(0x2000u);
+    vdac_set(0x2000u);
     if (get_user_data(FSTR("Measure open ckt"), FSTR("mV"))) return;
 
-    maxdac_set(0xdffcu);
+    vdac_set(0xdffcu);
     if (get_user_data(FSTR("Measure open ckt"), FSTR("mV"))) return;
 
     // Finished

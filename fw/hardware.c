@@ -1,17 +1,37 @@
 #include "config.h"
 #include "hardware.h"
 
+#include <afw/twi.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
+
+#define MAXDAC_TWI AFW_TWIBB
+
+#define MAXDAC_ADDR 0x38
+
+#define MAXDAC_CODE_LOAD    0x01
+
+#define MAXDAC_USER_CONFIG  0x08
+#define MAXDAC_CLEAR_DEFAULT_bm 0x00
+#define MAXDAC_CLEAR_ZERO_bm    0x10
+#define MAXDAC_CLEAR_MID_bm     0x20
+#define MAXDAC_CLEAR_FULL_bm    0x30
+#define MAXDAC_AUX_DISABLE_bm   0x00
+#define MAXDAC_AUX_nLDAC_bm     0x04
+#define MAXDAC_AUX_nCLR_bm      0x08
+#define MAXDAC_PWR_ON_bm        0x00
+#define MAXDAC_PWR_HIZ_bm       0x01
+#define MAXDAC_PWR_100k_bm      0x02
+#define MAXDAC_PWR_1k_bm        0x03
 
 static const uint8_t PROGMEM ADC_CHANNELS[] = {
     ADC_REFGND, ADC_ISENSE, ADC_VSENSE, ADC_TEMP, ADC_PREREG, 255 };
 
 static volatile uint16_t _ADC_RESULTS[16] = {0};
 
-void configure_dac(void)
+void idac_init(void)
 {
     // Copy factory calibration
     DACA.CH0GAINCAL = PRODSIGNATURES_DACA0GAINCAL;
@@ -22,9 +42,24 @@ void configure_dac(void)
     DACA.CTRLA |= DAC_ENABLE_bm;
 }
 
-void set_iset_dac(uint16_t value)
+void idac_set(uint16_t value)
 {
     DACA.CH0DATA = value;
+}
+
+bool vdac_init(void)
+{
+    MAXDAC_TWI.init();
+
+    uint8_t buffer[3] = {MAXDAC_USER_CONFIG, 0x00,
+        MAXDAC_CLEAR_ZERO_bm | MAXDAC_AUX_DISABLE_bm | MAXDAC_PWR_ON_bm };
+    return MAXDAC_TWI.transact(MAXDAC_ADDR, buffer, 3, 0) != TWI_GOOD;
+}
+
+bool vdac_set(uint16_t value)
+{
+    uint8_t buffer[3] = {MAXDAC_CODE_LOAD, U16_HI(value), U16_LO(value)};
+    return MAXDAC_TWI.transact(MAXDAC_ADDR, buffer, 3, 0) != TWI_GOOD;
 }
 
 void configure_adc(void)

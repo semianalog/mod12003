@@ -11,9 +11,11 @@
 // ADC positive mux bitmasks
 #define ADC_CH(n)   ((n) << ADC_CH_MUXPOS_gp)
 
-void configure_dac(void);
+void idac_init(void);
+void idac_set(uint16_t value);
 
-void set_iset_dac(uint16_t value);
+bool vdac_init(void);
+bool vdac_set(uint16_t value);
 
 void configure_adc(void);
 

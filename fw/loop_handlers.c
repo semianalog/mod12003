@@ -7,7 +7,6 @@
 #include <avr/pgmspace.h>
 #include <afw/misc.h>
 
-#include "dac.h"
 #include "cal.h"
 
 static void cmd_nop()
@@ -49,7 +48,7 @@ static void cmd_set_voltage(void)
 {
     //temporary: just set the DAC word
     uint16_t dac_word = U8_to_U16(g_loop_msg.data);
-    maxdac_set(dac_word);
+    vdac_set(dac_word);
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }
 

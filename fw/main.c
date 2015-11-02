@@ -10,7 +10,7 @@
 #include <afw/twi.h>
 #include <afw/uart.h>
 
-#include "dac.h"
+#include "hardware.h"
 #include "timers.h"
 #include "loop.h"
 #include "cal.h"
@@ -21,8 +21,8 @@ int main(void)
     afw_pins_init();
     afw_int_enable(0);
 
-    maxdac_init();
-    maxdac_set(0x4000uL);
+    vdac_init();
+    vdac_set(0x4000uL);
 
     PSET(P_ISET);   // full current for now
     PSET(P_LINREG_EN);
