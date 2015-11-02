@@ -2,6 +2,13 @@
 #define _CAL_H
 
 #include <inttypes.h>
+#include <avr/eeprom.h>
+
+/******************************************************************************
+ * Calibration constants
+ */
+extern uint32_t EEMEM   CAL_C_VSLOPE;
+extern uint16_t EEMEM   CAL_C_VOFFSET; // stored signed
 
 /******************************************************************************
  * Types used internally by the calibration system
@@ -61,6 +68,8 @@ extern volatile enum cal_cmd        g_cal_cmd;
 extern volatile struct cal_status   g_cal_status;
 extern volatile uint8_t             g_selected_cal;
 extern volatile int32_t             g_user_data;
+extern volatile uint8_t*            g_cal_data;
+extern volatile size_t              g_cal_data_sz;
 
 extern const uint8_t                N_CAL_ROUTINES;
 extern const __flash char *         CAL_NAMES[];

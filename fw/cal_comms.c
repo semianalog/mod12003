@@ -70,8 +70,7 @@ void cmd_cal_abort(void)
 
 void cmd_cal_read(void)
 {
-    g_cal_cmd = CAL_READ;
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) g_cal_data, g_cal_data_sz);
 }
 
 void cmd_cal_write(void)

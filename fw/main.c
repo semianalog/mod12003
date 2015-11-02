@@ -14,6 +14,7 @@
 #include "timers.h"
 #include "loop.h"
 #include "cal.h"
+#include "psu.h"
 
 int main(void)
 {
@@ -32,6 +33,8 @@ int main(void)
     timer_pwmset_prereg(255);
 
     loop_init();
+
+    psu_vset(5000u);
 
     for(;;) {
         PTGL(P_LEDCV);
