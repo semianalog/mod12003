@@ -11,7 +11,7 @@
 //  Interface code for MOD1 bus loop
 
 // When a message is received bearing data, the data is buffered.
-#define LOOP_DATA_BUF_SIZE  256
+#define LOOP_DATA_BUF_SIZE  64
 
 // Reserved addresses
 #define LOOP_ADDR_RESPONSE  254
