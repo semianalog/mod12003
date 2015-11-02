@@ -68,8 +68,10 @@ bool vdac_set(uint16_t value)
 
 void adc_init(void)
 {
+    // Conversion mode: unsigned
+    // Free run: no
     ADCA.CTRLA = 0;
-    ADCA.CTRLB = ADC_RESOLUTION_MT12BIT_gc;
+    ADCA.CTRLB = ADC_CURRLIMIT_NO_gc | ADC_RESOLUTION_MT12BIT_gc;
     ADCA.REFCTRL = ADC_REFSEL1_bm;  /* port A VREF */
     ADCA.PRESCALER =ADC_PRESCALER_DIV32_gc;
     ADCA.SAMPCTRL = 0x3f;   /* maximum sampling time */

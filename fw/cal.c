@@ -7,14 +7,16 @@
 #include <util/delay.h>
 #include <util/atomic.h>
 
-uint32_t EEMEM  CAL_C_VDACSLOPE;
+uint32_t EEMEM  CAL_C_VDACSLOPE_NUMER;
 uint16_t EEMEM  CAL_C_VDACOFFSET;
-uint32_t EEMEM  CAL_C_VADCSLOPE;
+uint32_t EEMEM  CAL_C_VADCSLOPE_NUMER;
 uint16_t EEMEM  CAL_C_VADCOFFSET;
+
+#define NO_SELECTED_CAL 0xff
 
 volatile enum cal_cmd       g_cal_cmd = CAL_NONE;
 volatile struct cal_status  g_cal_status = {CAL_STATE_IDLE, {0}, 0};
-volatile uint8_t            g_selected_cal = 0xff;
+volatile uint8_t            g_selected_cal = NO_SELECTED_CAL;
 volatile int32_t            g_user_data = 0;
 volatile uint8_t*           g_cal_data = NULL;
 volatile size_t             g_cal_data_sz = 0;
@@ -26,7 +28,7 @@ static void cal_finish(void)
         g_cal_cmd = CAL_NONE;
         g_cal_status.state = CAL_STATE_IDLE;
         g_cal_status.msg_len = 0;
-        g_selected_cal = 0xff;
+        g_selected_cal = NO_SELECTED_CAL;
     }
 }
 
@@ -46,9 +48,9 @@ static bool check_abort(void)
 static bool get_user_data(const __flash char *info, const __flash char *unit)
 {
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
-        strncpy_P((char *) g_cal_status.msg, info, 16);
-        strncpy_P((char *) g_cal_status.msg + 16, unit, 4);
-        g_cal_status.msg_len = 20;
+        strncpy_P((char *) g_cal_status.msg, info, USER_DATA_INFO_LEN);
+        strncpy_P((char *) g_cal_status.msg + USER_DATA_INFO_LEN, unit, USER_DATA_UNIT_LEN);
+        g_cal_status.msg_len = USER_DATA_INFO_LEN + USER_DATA_UNIT_LEN;
         g_cal_status.state = CAL_STATE_QUERY;
     }
     for (;;) {
@@ -88,7 +90,7 @@ static enum cal_cmd try_actions(void)
 }
 
 /******************************************************************************
- * Calibration routine: voltage sense
+ * Calibration routine: voltage
  *
  * Sets two output voltages, asks the user to measure them, and compares to the
  * ADC's measurement.
@@ -110,9 +112,9 @@ static void CAL_FUNCTION_VOLTAGE(void)
         };
         uint8_t data[12];
     } cal = {
-        { eeprom_read_dword(&CAL_C_VDACSLOPE),
+        { eeprom_read_dword(&CAL_C_VDACSLOPE_NUMER),
           eeprom_read_word(&CAL_C_VDACOFFSET),
-          eeprom_read_dword(&CAL_C_VADCSLOPE),
+          eeprom_read_dword(&CAL_C_VADCSLOPE_NUMER),
           eeprom_read_word(&CAL_C_VADCOFFSET) }
     };
 
@@ -127,19 +129,21 @@ static void CAL_FUNCTION_VOLTAGE(void)
         return;
     }
 
-    // Running - simulate :)
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
         g_cal_status.state = CAL_STATE_RUNNING;
         g_cal_status.msg_len = 0;
     }
 
+    const __flash char *user_msg  = FSTR("Measure open ckt");
+    const __flash char *user_unit = FSTR("mV");
+
     vdac_set(SETPOINT_LO);
-    if (get_user_data(FSTR("Measure open ckt"), FSTR("mV"))) return;
+    if (get_user_data(user_msg, user_unit)) return;
     uint16_t measured_lo_mv = g_user_data;
     uint16_t adc_lo = (uint16_t)(adc_sample_n(ADC_VSENSE, 1024) / 1024);
 
     vdac_set(SETPOINT_HI);
-    if (get_user_data(FSTR("Measure open ckt"), FSTR("mV"))) return;
+    if (get_user_data(user_msg, user_unit)) return;
     uint16_t measured_hi_mv = g_user_data;
     uint16_t adc_hi = (uint16_t)(adc_sample_n(ADC_VSENSE, 1024) / 1024);
 
@@ -147,11 +151,11 @@ static void CAL_FUNCTION_VOLTAGE(void)
     uint16_t measured_delta_mv = measured_hi_mv - measured_lo_mv;
     uint16_t adc_delta = adc_hi - adc_lo;
 
-    int64_t dacslope_i64 = (INT64_C(65536) * SETPOINT_DELTA) / measured_delta_mv;
-    int64_t dacoffset_i64 = SETPOINT_LO - dacslope_i64 * measured_lo_mv / INT64_C(65536);
+    int64_t dacslope_i64 = (CAL_C_VDACSLOPE_DENOM * SETPOINT_DELTA) / measured_delta_mv;
+    int64_t dacoffset_i64 = SETPOINT_LO - dacslope_i64 * measured_lo_mv / CAL_C_VDACSLOPE_DENOM;
 
-    int64_t adcslope_i64 = (INT64_C(65536) * measured_delta_mv) / adc_delta;
-    int64_t adcoffset_i64 = measured_lo_mv - adcslope_i64 * adc_lo / INT64_C(65536);
+    int64_t adcslope_i64 = (CAL_C_VADCSLOPE_DENOM * measured_delta_mv) / adc_delta;
+    int64_t adcoffset_i64 = measured_lo_mv - adcslope_i64 * adc_lo / CAL_C_VADCSLOPE_DENOM;
 
     cal.dacslope = (uint64_t)dacslope_i64;
     cal.dacoffset = dacoffset_i64;
@@ -175,9 +179,9 @@ static void CAL_FUNCTION_VOLTAGE(void)
         return;
     }
 
-    eeprom_write_dword(&CAL_C_VDACSLOPE, cal.dacslope);
+    eeprom_write_dword(&CAL_C_VDACSLOPE_NUMER, cal.dacslope);
     eeprom_write_word(&CAL_C_VDACOFFSET, cal.dacoffset);
-    eeprom_write_dword(&CAL_C_VADCSLOPE, cal.adcslope);
+    eeprom_write_dword(&CAL_C_VADCSLOPE_NUMER, cal.adcslope);
     eeprom_write_word(&CAL_C_VADCOFFSET, cal.adcoffset);
 
     cal_finish();

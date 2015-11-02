@@ -7,9 +7,11 @@
 /******************************************************************************
  * Calibration constants
  */
-extern uint32_t EEMEM   CAL_C_VDACSLOPE;
+extern uint32_t EEMEM   CAL_C_VDACSLOPE_NUMER;
+static const int64_t    CAL_C_VDACSLOPE_DENOM   = 65536;
 extern uint16_t EEMEM   CAL_C_VDACOFFSET; // stored signed
-extern uint32_t EEMEM   CAL_C_VADCSLOPE;
+extern uint32_t EEMEM   CAL_C_VADCSLOPE_NUMER;
+static const int64_t    CAL_C_VADCSLOPE_DENOM   = 65536;
 extern uint16_t EEMEM   CAL_C_VADCOFFSET; // stored signed
 
 /******************************************************************************
@@ -55,6 +57,19 @@ struct cal_status {
     uint8_t msg[20];
     uint8_t msg_len;
 } __attribute__((packed));
+
+/**
+ * Length of cal_status.msg reserved for user data info
+ */
+#define USER_DATA_INFO_LEN  16
+
+/**
+ * Length of cal_status.msg reserved for user data unit
+ */
+#define USER_DATA_UNIT_LEN  4
+
+_Static_assert(USER_DATA_INFO_LEN + USER_DATA_UNIT_LEN <= sizeof(((struct cal_status){0}).msg),
+        "User data message must fit in message field");
 
 /**
  * Calibration routine function

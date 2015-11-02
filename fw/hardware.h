@@ -14,6 +14,9 @@
 // ADC positive mux bitmasks
 #define ADC_CH(n)   ((n) << ADC_CH_MUXPOS_gp)
 
+// ADC maximum value
+static const uint16_t ADC_TOP = 0x7fff;
+
 void idac_init(void);
 void idac_set(uint16_t value);
 
