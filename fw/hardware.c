@@ -6,6 +6,7 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
+#include <util/atomic.h>
 
 #define MAXDAC_TWI AFW_TWIBB
 
@@ -83,10 +84,11 @@ void configure_adc(void)
 
 uint16_t get_adc_result(uint8_t n)
 {
-    cli();
-    uint16_t hold = _ADC_RESULTS[n];
-    sei();
-    return hold;
+    uint16_t result = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        result = _ADC_RESULTS[n];
+    }
+    return result;
 }
 
 #include <stdio.h>
@@ -111,11 +113,11 @@ ISR(ADCA_CH0_vect)
 uint8_t read_prodsig(uint8_t idx)
 {
     uint8_t result;
-    cli();
-    NVM_CMD = NVM_CMD_READ_CALIB_ROW_gc;
-    result = pgm_read_byte(idx);
-    NVM_CMD = NVM_CMD_NO_OPERATION_gc;
-    sei();
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        NVM_CMD = NVM_CMD_READ_CALIB_ROW_gc;
+        result = pgm_read_byte(idx);
+        NVM_CMD = NVM_CMD_NO_OPERATION_gc;
+    }
     return result;
 }
 
