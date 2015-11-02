@@ -121,3 +121,36 @@ uint8_t read_prodsig(uint8_t idx)
     return result;
 }
 
+void crc_init(void)
+{
+    CRC.CTRL = CRC_RESET_RESET1_gc;
+    CRC.CTRL = CRC_SOURCE_IO_gc;
+}
+
+void crc_process_byte(uint8_t byte)
+{
+    CRC.DATAIN = byte;
+}
+
+void crc_process_bytes(const uint8_t* bytes, size_t n)
+{
+    for (size_t i = 0; i < n; ++i) {
+        crc_process_byte(bytes[i]);
+    }
+}
+
+uint16_t crc_get_checksum(void)
+{
+    CRC.STATUS |= CRC_BUSY_bm;
+    while (CRC.STATUS & CRC_BUSY_bm);
+    uint16_t checksum = ((uint16_t) CRC.CHECKSUM0) & 0xff;
+    checksum |= ((uint16_t) CRC.CHECKSUM1 << 8) & 0xff00;
+    return checksum;
+}
+
+bool crc_is_checksum_zero(void)
+{
+    CRC.STATUS |= CRC_BUSY_bm;
+    while (CRC.STATUS & CRC_BUSY_bm);
+    return CRC.STATUS & CRC_ZERO_bm;
+}
