@@ -38,9 +38,22 @@ int main(void)
 
     psu_vset(5000u);
 
+    uint8_t adc_channels = adc_n_ch();
+    uint8_t channels_scanned = 0;
+
     for(;;) {
         PTGL(P_LEDCV);
         cal_run();
-        adc_cycle();
+        if (adc_cycle()) {
+            ++channels_scanned;
+        }
+        if (channels_scanned == adc_channels) {
+            channels_scanned = 0;
+            psu_fast_cycle();
+        }
+        if (TICK) {
+            TICK = false;
+            psu_slow_cycle();
+        }
     }
 }

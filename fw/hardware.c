@@ -116,6 +116,11 @@ void adc_scan(void)
     }
 }
 
+uint8_t adc_n_ch(void)
+{
+    return N_ADC_CHANNELS;
+}
+
 uint32_t adc_sample_n(uint8_t channel, uint16_t times)
 {
     uint32_t sum = 0;

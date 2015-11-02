@@ -61,6 +61,13 @@ static void cmd_q_voltage(void)
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, 2);
 }
 
+static void cmd_q_prereg(void)
+{
+    uint16_t mv = psu_prereg_vget();
+    uint8_t buffer[2] = {U16_BYTE(mv, 0), U16_BYTE(mv, 1)};
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, 2);
+}
+
 void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_NOP] = &cmd_nop,
     [CMD_IDN] = &cmd_idn,
@@ -70,6 +77,7 @@ void (* const __flash CMD_HANDLERS[256])() = {
 
     [CMD_SET_VOLTAGE] = &cmd_set_voltage,
     [CMD_QVOLTAGE]   = &cmd_q_voltage,
+    [CMD_QPREREG]    = &cmd_q_prereg,
 
     [CMD_CAL_COUNT]  = &cmd_cal_count,
     [CMD_CAL_SELECT] = &cmd_cal_select,

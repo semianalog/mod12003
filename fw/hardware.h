@@ -33,6 +33,11 @@ bool adc_cycle(void);
 void adc_scan(void);
 
 /**
+ * Report the number of ADC channels that are scanned.
+ */
+uint8_t adc_n_ch(void);
+
+/**
  * Sample a given channel N times and return the sum. Performs full scans
  * until enough acquisitions have been made.
  */

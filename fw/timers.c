@@ -21,7 +21,7 @@ void timers_init(void)
     EVSYS.CH0MUX = EVSYS_CHMUX_TCC4_OVF_gc;
 
     TCC5.CTRLA = TC45_CLKSEL_EVCH0_gc;
-    TCC5.PER = 62500u;
+    TCC5.PER = 15625u;
     TCC5.CTRLGCLR = TC5_STOP_bm;
     TCC5.INTCTRLA = TC45_OVFINTLVL_LO_gc;
 }

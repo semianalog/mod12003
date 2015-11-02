@@ -38,6 +38,8 @@
 #define CMD_QVOLTAGE    0x91    // return actual output voltage, little-endian int32_t millivolts
 #define CMD_QCURRENT    0x92    // return actual output current, little-endian int32_t microamps
 
+#define CMD_QPREREG     0xa0    // query prereg voltage (for debug)
+
 #define CMD_CAL_COUNT   0xf0    // return the number of cal routines, little-endian uint16_t
 #define CMD_CAL_SELECT  0xf1    // in:  LE uint16_t, cal routine ID
                                 // select a calibration routine
