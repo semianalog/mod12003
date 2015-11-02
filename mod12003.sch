@@ -503,7 +503,7 @@ Text Notes 900  2250 0    50   ~ 0
 24V
 Text Notes 700  6350 0    50   ~ 0
 LOOP INTERFACE\n\nThe mainboard and all modules must be joined in a loop,\noutput of one connected to the input of the next. The sequence\nwill determine the logical ordering of the modules as seen\nby the user interface.
-Text Notes 9250 7300 0    150  ~ 30
+Text Notes 6350 7300 0    150  ~ 30
 MOD12003
 $Comp
 L +3.6 #PWR06
@@ -1059,8 +1059,6 @@ $EndComp
 Connection ~ 750  7400
 Text Label 1200 6850 2    50   ~ 0
 PAD_MP1
-Text Notes 7650 7350 0    50   ~ 0
-Open hardware\nCPOHL 1.0 or greater
 Wire Wire Line
 	6600 4500 6600 4550
 $Comp
