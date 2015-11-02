@@ -70,6 +70,9 @@ static void CAL_FUNCTION_VSENSE(void)
     switch (g_cal_cmd) {
     case CAL_RUN:
         break;
+    case CAL_ABORT:
+        cal_finish();
+        // fall through
     default:
         return;
     }
