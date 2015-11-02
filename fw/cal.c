@@ -96,7 +96,7 @@ static const char __flash CAL_NAME_VSENSE[] = "V Sense";
 static void CAL_FUNCTION_VSENSE(void)
 {
     const uint16_t SETPOINT_LO = 0x2000u;
-    const uint16_t SETPOINT_HI = 0xdffcu;
+    const uint16_t SETPOINT_HI = 0xd000u;
     const int64_t SETPOINT_DELTA = (uint64_t)(SETPOINT_HI - SETPOINT_LO);
 
     union {
