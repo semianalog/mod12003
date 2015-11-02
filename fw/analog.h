@@ -7,14 +7,6 @@
 #include <inttypes.h>
 
 /**
- * How much to allow the voltage softloop integrator to wind up by.
- *
- * The softloop is only meant to make small corrections for things like op amp
- * offset voltage drift, so clamping the integrator prevents large spikes.
- */
-static const uint16_t   VOLTAGE_WINDUP_LIMIT_MV     = 75;
-
-/**
  * Integration constant for the voltage softloop.
  *
  * An additional factor of 1/TICK_PERIOD is implicit.
@@ -23,9 +15,24 @@ static const int32_t    VOLTAGE_KI_NUMER            = 32;
 static const int32_t    VOLTAGE_KI_DENOM            = 1024;
 
 /**
+ * How much to allow the voltage softloop integrator to wind up by.
+ *
+ * The softloop is only meant to make small corrections for things like op amp
+ * offset voltage drift, so clamping the integrator prevents large spikes.
+ */
+static const uint16_t   VOLTAGE_WINDUP_LIMIT_MV     = 75;
+
+/**
+ * Voltage windup limit in integrator units, before application of the
+ * integration constant. This is a computed constant.
+ */
+#define VOLTAGE_WINDUP_LIMIT_RAW (VOLTAGE_KI_DENOM * VOLTAGE_WINDUP_LIMIT_MV / VOLTAGE_KI_NUMER)
+
+/**
  * Divisor for voltage ADC lowpass. This function is repeated every "fast" cycle:
  * lowpass_adc += (adc - lowpass_adc) / divisor;
  */
+static const int32_t    ADC_LOWPASS_DIVISOR         = 16;
 
 
 /**

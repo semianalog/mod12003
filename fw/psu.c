@@ -7,11 +7,9 @@
 static int32_t          gs_cur_voltage_avg_numer    = 0;
 static const int32_t    gs_cur_voltage_avg_denom    = INT32_C(32768);
 static int32_t          gs_voltage_setpoint         = 0;
-static int32_t          gs_voltage_error            = 0;
-static int32_t          gs_voltage_error_accum      = 0;
 static uint16_t         gs_last_voltage             = 0;
 static bool             gs_vset_updated             = false;
-static int8_t           gs_correction_railed        = 0;
+static int32_t          gs_correction_mv            = 0;
 
 void psu_vset(uint16_t mv)
 {
@@ -21,21 +19,7 @@ void psu_vset(uint16_t mv)
 
 void psu_update(void)
 {
-    int32_t correction = VOLTAGE_KI_NUMER * gs_voltage_error_accum / VOLTAGE_KI_DENOM;
-
-    // Clamp integrator windup
-    // TODO: this can be moved to psu_slow_cycle and eliminate gs_correction_railed
-    if (correction > VOLTAGE_WINDUP_LIMIT_MV) {
-        correction = VOLTAGE_WINDUP_LIMIT_MV;
-        gs_correction_railed = 1;
-    } else if (correction < -VOLTAGE_WINDUP_LIMIT_MV) {
-        correction = -VOLTAGE_WINDUP_LIMIT_MV;
-        gs_correction_railed = -1;
-    } else {
-        gs_correction_railed = 0;
-    }
-
-    int32_t mv = gs_voltage_setpoint - correction;
+    int32_t mv = gs_voltage_setpoint - gs_correction_mv;
 
     int64_t vslope = (uint64_t)(eeprom_read_dword(&CAL_C_VDACSLOPE_NUMER));
     int64_t voffset = (int16_t)(eeprom_read_word(&CAL_C_VDACOFFSET));
@@ -76,7 +60,7 @@ void psu_fast_cycle(void)
 
     int32_t error = adc_word - gs_cur_voltage_avg_numer;
 
-    gs_cur_voltage_avg_numer += error / 16;
+    gs_cur_voltage_avg_numer += error / ADC_LOWPASS_DIVISOR;
 
     uint16_t prereg = psu_prereg_vget();
     uint16_t postreg = gs_last_voltage;
@@ -89,24 +73,32 @@ void psu_fast_cycle(void)
 
 void psu_slow_cycle(void)
 {
-    if (gs_vset_updated) {
-        gs_vset_updated = false;
-        gs_voltage_error = 0;
-        gs_voltage_error_accum = 0;
-        psu_prereg_vset(gs_voltage_setpoint + REGULATOR_HEADROOM_LIMIT_MV);
-    } else {
-        gs_last_voltage = psu_vget();
-        gs_voltage_error = (int32_t)(gs_last_voltage) - gs_voltage_setpoint;
+    static int32_t s_voltage_error_accum = 0;
 
-        // If the integrator is railed, only move it towards center
-        if (gs_correction_railed > 0 && gs_voltage_error > 0) {
-            gs_voltage_error = 0;
-        } else if (gs_correction_railed < 0 && gs_voltage_error < 0) {
-            gs_voltage_error = 0;
+    // TODO: can this be removed?
+    if (gs_vset_updated) {
+        // Clear everything out
+        gs_vset_updated = false;
+        s_voltage_error_accum = 0;
+        psu_prereg_vset(gs_voltage_setpoint + REGULATOR_HEADROOM_LIMIT_MV);
+
+    } else {
+
+        gs_last_voltage = psu_vget();
+        int32_t error = (int32_t)(gs_last_voltage) - gs_voltage_setpoint;
+
+        s_voltage_error_accum += error;
+
+        if (s_voltage_error_accum > VOLTAGE_WINDUP_LIMIT_RAW) {
+            s_voltage_error_accum = VOLTAGE_WINDUP_LIMIT_RAW;
+        } else if (s_voltage_error_accum < -VOLTAGE_WINDUP_LIMIT_RAW) {
+            s_voltage_error_accum = -VOLTAGE_WINDUP_LIMIT_RAW;
         }
 
-        gs_voltage_error_accum += gs_voltage_error;
+        gs_correction_mv = VOLTAGE_KI_NUMER * s_voltage_error_accum / VOLTAGE_KI_DENOM;
+
         psu_prereg_vset(gs_last_voltage + REGULATOR_HEADROOM_LIMIT_MV);
+
     }
     psu_update();
 }
