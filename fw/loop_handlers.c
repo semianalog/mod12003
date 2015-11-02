@@ -21,20 +21,22 @@ static void cmd_idn()
 
 static void cmd_serial()
 {
-    // TODO: maybe CRC this data to get a shorter serial?
-    char buffer[45];
-    sprintf(buffer, "lot(%02X%02X%02X%02X%02X%02X)waf(%02X)x(%02X%02X)y(%02X%02X)",
-            READ_PRODSIG(LOTNUM5),
-            READ_PRODSIG(LOTNUM4),
-            READ_PRODSIG(LOTNUM3),
-            READ_PRODSIG(LOTNUM2),
-            READ_PRODSIG(LOTNUM1),
-            READ_PRODSIG(LOTNUM0),
-            READ_PRODSIG(WAFNUM),
-            READ_PRODSIG(COORDX1),
-            READ_PRODSIG(COORDX0),
-            READ_PRODSIG(COORDY1),
-            READ_PRODSIG(COORDY0));
+    crc_init();
+    crc_process_byte(READ_PRODSIG(LOTNUM5));
+    crc_process_byte(READ_PRODSIG(LOTNUM4));
+    crc_process_byte(READ_PRODSIG(LOTNUM3));
+    crc_process_byte(READ_PRODSIG(LOTNUM2));
+    crc_process_byte(READ_PRODSIG(LOTNUM1));
+    crc_process_byte(READ_PRODSIG(LOTNUM0));
+    crc_process_byte(READ_PRODSIG(WAFNUM));
+    crc_process_byte(READ_PRODSIG(COORDX1));
+    crc_process_byte(READ_PRODSIG(COORDX0));
+    crc_process_byte(READ_PRODSIG(COORDY1));
+    crc_process_byte(READ_PRODSIG(COORDY0));
+    uint16_t crc = crc_get_checksum();
+
+    char buffer[6];
+    sprintf(buffer, "%"PRIu16, crc);
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) buffer, strlen(buffer));
 }
 
