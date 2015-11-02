@@ -22,8 +22,8 @@ F_CPU=32000000
 INCROOT=afw/include
 SRCROOT=afw/src
 
-CFLAGS 	 ?= -mmcu=${MCU} -DF_CPU=${F_CPU}uLL -I${INCROOT} -iquote. -std=gnu99 -flto -O1 -g -Wall -Wextra
-LDFLAGS  ?= -mmcu=${MCU} -std=gnu99 -flto -O1 -g -Wall -Wextra
+CFLAGS 	 ?= -mmcu=${MCU} -DF_CPU=${F_CPU}uLL -I${INCROOT} -iquote. -std=gnu11 -flto -O1 -g -Wall -Wextra
+LDFLAGS  ?= -mmcu=${MCU} -std=gnu11 -flto -O1 -g -Wall -Wextra
 
 HFILES = $(shell find ${INCROOT} -type f -name '*.h') $(wildcard *.h)
 CFILES = $(shell find ${SRCROOT} -type f -name '*.c') $(wildcard *.c)
