@@ -3,10 +3,81 @@
 
 #include <inttypes.h>
 
-/**
- * Pump the calibration state machine. Run from the main loop.
+/******************************************************************************
+ * Types used internally by the calibration system
  */
-void cal_state_cycle(void);
+
+/**
+ * Calibration commands passed from comms to main loop.
+ */
+enum cal_cmd {
+    CAL_NONE,
+    CAL_RUN,
+    CAL_SAVE,
+    CAL_ABORT,
+    CAL_READ,
+    CAL_WRITE,
+    CAL_USER,
+} __attribute__((packed));
+
+// Single-byte accesses are atomic, so make sure the enum is a byte
+_Static_assert(sizeof(enum cal_cmd) == 1, "enum cal_cmd must have fewer than 256 elements");
+
+/**
+ * Calibration state passed from main loop to comms.
+ */
+enum cal_state {
+    CAL_STATE_IDLE,
+    CAL_STATE_SELECTED,
+    CAL_STATE_ERROR,
+    CAL_STATE_RUNNING,
+    CAL_STATE_QUERY,
+    CAL_STATE_FINISHED,
+} __attribute__((packed));
+
+// This is passed in a defined binary message, so make sure the size is right
+_Static_assert(sizeof(enum cal_state) == 1, "enum cal_state must have fewer than 256 elements");
+
+/**
+ * Status message passed from main loop to comms.
+ */
+struct cal_status {
+    enum cal_state state;
+    uint8_t msg[20];
+    uint8_t msg_len;
+} __attribute__((packed));
+
+/**
+ * Calibration routine function
+ */
+typedef void (*cal_routine_fp)(void);
+
+/******************************************************************************
+ * Communication between loop comm ISR and the calibration function in the
+ * main loop.
+ */
+
+extern volatile enum cal_cmd        g_cal_cmd;
+extern volatile struct cal_status   g_cal_status;
+extern volatile uint8_t             g_selected_cal;
+extern volatile int32_t             g_user_data;
+
+extern const uint8_t                N_CAL_ROUTINES;
+extern const __flash char *         CAL_NAMES[];
+extern const __flash cal_routine_fp CAL_FUNCTIONS[];
+
+/******************************************************************************
+ * Main loop functions
+ */
+
+/**
+ * Run calibration, if the calibration system has been activated, or else return.
+ */
+void cal_run(void);
+
+/******************************************************************************
+ * Comms functions. These run from within the comm loop ISR.
+ */
 
 void cmd_cal_count(void);
 void cmd_cal_select(void);

@@ -34,6 +34,6 @@ int main(void)
     loop_init();
 
     for(;;) {
-        cal_state_cycle();
+        cal_run();
     }
 }

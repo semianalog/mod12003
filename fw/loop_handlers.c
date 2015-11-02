@@ -22,6 +22,7 @@ static void cmd_idn()
 
 static void cmd_serial()
 {
+    // TODO: maybe CRC this data to get a shorter serial?
     char buffer[45];
     sprintf(buffer, "lot(%02X%02X%02X%02X%02X%02X)waf(%02X)x(%02X%02X)y(%02X%02X)",
             READ_PRODSIG(LOTNUM5),
