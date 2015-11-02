@@ -34,6 +34,7 @@ int main(void)
     loop_init();
 
     for(;;) {
+        PTGL(P_LEDCV);
         cal_run();
     }
 }
