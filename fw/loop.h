@@ -71,7 +71,7 @@
  */
 
 /* Jump table, one per command */
-extern void (* const CMD_HANDLERS[256])() PROGMEM;
+extern void (* const __flash CMD_HANDLERS[256])();
 
 /**
  * A messsage received on the loop.

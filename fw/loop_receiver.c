@@ -132,7 +132,7 @@ LOOP_UART_RXCINT()
         if (gs_state == FINISHED) {
             crc_buffered_message();
             if (crc_is_checksum_zero()) {
-                void (*handler)() = pgm_read_ptr(&CMD_HANDLERS[g_loop_msg.cmd]);
+                void (*handler)() = CMD_HANDLERS[g_loop_msg.cmd];
                 if (handler) {
                     handler();
                 } else {

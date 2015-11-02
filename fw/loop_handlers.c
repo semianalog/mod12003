@@ -55,7 +55,7 @@ static void cmd_set_voltage(void)
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }
 
-void (* const CMD_HANDLERS[256])() PROGMEM = {
+void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_NOP] = &cmd_nop,
     [CMD_IDN] = &cmd_idn,
     [CMD_SERIAL] = &cmd_serial,
