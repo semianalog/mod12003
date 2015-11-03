@@ -75,7 +75,6 @@ void psu_slow_cycle(void)
 {
     static int32_t s_voltage_error_accum = 0;
 
-    // TODO: can this be removed?
     if (gs_vset_updated) {
         // Clear everything out
         gs_vset_updated = false;
