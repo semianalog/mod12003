@@ -66,7 +66,7 @@
                                 //  actually write to EEPROM.
 
 /* CMD_COUNT
- * Used to count the number of devices on the loop. This is send to the first device
+ * Used to count the number of devices on the loop. This is sent to the first device
  * (address zero), which should then increment the 8-bit number in the data block and
  * send it to the next device. When it comes back around, it will contain the number
  * of devices on the loop.
