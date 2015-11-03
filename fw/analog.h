@@ -20,7 +20,7 @@ static const int32_t    VOLTAGE_KI_DENOM            = 1024;
  * The softloop is only meant to make small corrections for things like op amp
  * offset voltage drift, so clamping the integrator prevents large spikes.
  */
-static const uint16_t   VOLTAGE_WINDUP_LIMIT_MV     = 75;
+static const uint16_t   VOLTAGE_WINDUP_LIMIT_MV     = 32;
 
 /**
  * Voltage windup limit in integrator units, before application of the

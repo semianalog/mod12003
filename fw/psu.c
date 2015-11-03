@@ -10,7 +10,8 @@
 static const int32_t    ADC_LOWPASS_DENOM           = INT32_C(32768);
 static int32_t          gs_cur_voltage_avg_numer    = 0;
 static int32_t          gs_cur_current_avg_numer    = 0;
-static int32_t          gs_voltage_setpoint         = 0;
+static int32_t          gs_voltage_setpoint         = 0;    /// XXX: why int32_t?
+static int32_t          gs_current_setpoint         = 0;    /// XXX: why int32_t?
 static uint16_t         gs_last_voltage             = 0;
 static bool             gs_vset_updated             = false;
 static int32_t          gs_correction_mv            = 0;
@@ -46,6 +47,16 @@ void psu_vset(uint16_t mv)
     gs_vset_updated = true;
 }
 
+uint16_t psu_get_vsetpt(void)
+{
+    return gs_voltage_setpoint;
+}
+
+uint16_t psu_get_isetpt(void)
+{
+    return gs_current_setpoint;
+}
+
 void psu_update(void)
 {
     int32_t mv = gs_voltage_setpoint - gs_correction_mv;
@@ -67,6 +78,7 @@ uint16_t psu_iget(void)
 
 void psu_iset(uint16_t ma)
 {
+    gs_current_setpoint = ma;
     uint16_t word = linear(CAL_DATA_CURRENT.dacslope, ma, CAL_DATA_CURRENT.dacoffset);
     idac_set(word);
 }

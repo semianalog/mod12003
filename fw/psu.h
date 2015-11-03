@@ -58,6 +58,12 @@ uint16_t psu_iget(void);
  */
 void psu_iset(uint16_t ma);
 
+/// Get the voltage setpoint in mV
+uint16_t psu_get_vsetpt(void);
+
+/// Get the current setpoint in mA
+uint16_t psu_get_isetpt(void);
+
 /**
  * Update the DACs.
  */

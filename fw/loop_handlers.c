@@ -115,6 +115,20 @@ static void cmd_q_prereg(void)
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, 2);
 }
 
+static void cmd_q_setvolt(void)
+{
+    uint16_t mv = psu_get_vsetpt();
+    int32_t mv_i32 = (uint32_t) mv;
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &mv_i32, sizeof(mv_i32));
+}
+
+static void cmd_q_setcurr(void)
+{
+    uint16_t ma = psu_get_isetpt();
+    int32_t ua_i32 = (uint32_t) ma * 1000;
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &ua_i32, sizeof(ua_i32));
+}
+
 void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_NOP] = &cmd_nop,
     [CMD_IDN] = &cmd_idn,
@@ -128,6 +142,8 @@ void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_QOUTPUT]    = &cmd_q_output,
     [CMD_QVOLTAGE]   = &cmd_q_voltage,
     [CMD_QCURRENT]   = &cmd_q_current,
+    [CMD_QSET_VOLT]  = &cmd_q_setvolt,
+    [CMD_QSET_CURR]  = &cmd_q_setcurr,
     [CMD_QPREREG]    = &cmd_q_prereg,
 
     [CMD_CAL_COUNT]  = &cmd_cal_count,
