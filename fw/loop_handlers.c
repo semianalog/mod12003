@@ -47,6 +47,12 @@ static void cmd_count()
     send_msg(0, CMD_COUNT, &count, 1);
 }
 
+static void cmd_output_en()
+{
+    psu_enable(g_loop_msg.data[0]);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+}
+
 static void cmd_set_voltage(void)
 {
     uint16_t millivolts = U8_to_U16(g_loop_msg.data[0], g_loop_msg.data[1]);
@@ -95,6 +101,7 @@ void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_COUNT] = &cmd_count,
     [CMD_ACK] = &cmd_nop,
 
+    [CMD_OUTPUT_EN]  = &cmd_output_en,
     [CMD_SET_VOLTAGE] = &cmd_set_voltage,
     [CMD_QOUTPUT]    = &cmd_q_output,
     [CMD_QVOLTAGE]   = &cmd_q_voltage,

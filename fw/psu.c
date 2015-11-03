@@ -1,4 +1,5 @@
 #include <afw/pins.h>
+#include <util/delay.h>
 #include "psu.h"
 #include "hardware.h"
 #include "cal.h"
@@ -11,10 +12,11 @@ static int32_t          gs_voltage_setpoint         = 0;
 static uint16_t         gs_last_voltage             = 0;
 static bool             gs_vset_updated             = false;
 static int32_t          gs_correction_mv            = 0;
+static volatile bool    gs_enabled                  = false;
 
 void psu_enable(bool enabled)
 {
-    PPUT(P_LINREG_EN, enabled);
+    gs_enabled = enabled;
 }
 
 bool psu_enabled(void)
@@ -99,23 +101,41 @@ void psu_fast_cycle(void)
 void psu_slow_cycle(void)
 {
     static int32_t s_voltage_error_accum = 0;
-    static uint8_t s_tickcount = 0;
+    static bool s_last_enabled = false;
 
-    ++s_tickcount;
-    enum psu_reg_mode mode = psu_get_reg_mode();
-    switch (mode) {
-    case PSU_REG_CV:
-        PSET(P_LEDCV);
+    if (gs_enabled) {
+        enum psu_reg_mode mode = psu_get_reg_mode();
+        switch (mode) {
+        case PSU_REG_CV:
+            PSET(P_LEDCV);
+            PCLR(P_LEDCC);
+            break;
+        case PSU_REG_CC:
+            PSET(P_LEDCC);
+            PCLR(P_LEDCV);
+            break;
+        case PSU_OSCILLATING:
+        default:
+            PSET(P_LEDCC);
+            PSET(P_LEDCV);
+        }
+
+        if (!s_last_enabled) {
+            // soft start
+            s_last_enabled = true;
+            s_voltage_error_accum = 0;
+            gs_correction_mv = 0;
+            vdac_set(0);
+            _delay_us(50);
+            PSET(P_LINREG_EN);
+            return;
+        }
+    } else {
+        s_last_enabled = false;
+        PCLR(P_LINREG_EN);
         PCLR(P_LEDCC);
-        break;
-    case PSU_REG_CC:
-        PSET(P_LEDCC);
         PCLR(P_LEDCV);
-        break;
-    case PSU_OSCILLATING:
-    default:
-        PPUT(P_LEDCC, s_tickcount % 1);
-        PPUT(P_LEDCV, !(s_tickcount % 1));
+        return;
     }
 
     if (gs_vset_updated) {

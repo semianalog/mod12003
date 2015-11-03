@@ -28,15 +28,11 @@ int main(void)
     vdac_set(0x4000uL);
 
     PSET(P_ISET);   // full current for now
-    PSET(P_LINREG_EN);
 
     timers_init();
     timer_pwmset_ovpth(255);
-    timer_pwmset_prereg(255);
 
     loop_init();
-
-    psu_vset(5000u);
 
     uint8_t adc_channels = adc_n_ch();
     uint8_t channels_scanned = 0;
