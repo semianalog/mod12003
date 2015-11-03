@@ -22,6 +22,7 @@ int main(void)
     afw_pins_init();
     afw_int_enable(0);
 
+    cal_init();
     adc_init();
 
     vdac_init();

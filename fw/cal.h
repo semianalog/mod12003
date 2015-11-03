@@ -7,15 +7,19 @@
 /******************************************************************************
  * Calibration constants
  */
-static const int64_t    CAL_C_DENOM             = 65536;
-extern uint32_t EEMEM   CAL_C_VDACSLOPE_NUMER;
-extern uint16_t EEMEM   CAL_C_VDACOFFSET; // stored signed
-extern uint32_t EEMEM   CAL_C_VADCSLOPE_NUMER;
-extern uint16_t EEMEM   CAL_C_VADCOFFSET; // stored signed
-extern uint32_t EEMEM   CAL_C_IDACSLOPE_NUMER;
-extern uint16_t EEMEM   CAL_C_IDACOFFSET; // stored signed
-extern uint32_t EEMEM   CAL_C_IADCSLOPE_NUMER;
-extern uint16_t EEMEM   CAL_C_IADCOFFSET; // stored signed
+
+struct cal_data {
+    int32_t     dacslope;
+    int16_t     dacoffset;
+    int32_t     adcslope;
+    int16_t     adcoffset;
+};
+
+extern struct cal_data EEMEM    EE_CAL_DATA_VOLTAGE;   // 191069, 102, 84213, 16
+extern struct cal_data EEMEM    EE_CAL_DATA_CURRENT;   // 89115, 9, 6311, -124
+
+extern struct cal_data      CAL_DATA_VOLTAGE;
+extern struct cal_data      CAL_DATA_CURRENT;
 
 /******************************************************************************
  * Types used internally by the calibration system
@@ -98,6 +102,11 @@ extern const __flash cal_routine_fp CAL_FUNCTIONS[];
 /******************************************************************************
  * Main loop functions
  */
+
+/**
+ * Load calibration data.
+ */
+void cal_init(void);
 
 /**
  * Run calibration, if the calibration system has been activated, or else return.

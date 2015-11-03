@@ -2,20 +2,18 @@
 #include "loop.h"
 #include "hardware.h"
 #include "psu.h"
+#include "misc_math.h"
 #include <afw/misc.h>
 #include <afw/pins.h>
 #include <string.h>
 #include <util/delay.h>
 #include <util/atomic.h>
 
-uint32_t EEMEM  CAL_C_VDACSLOPE_NUMER;
-uint16_t EEMEM  CAL_C_VDACOFFSET;
-uint32_t EEMEM  CAL_C_VADCSLOPE_NUMER;
-uint16_t EEMEM  CAL_C_VADCOFFSET;
-uint32_t EEMEM  CAL_C_IDACSLOPE_NUMER;
-uint16_t EEMEM  CAL_C_IDACOFFSET;
-uint32_t EEMEM  CAL_C_IADCSLOPE_NUMER;
-uint16_t EEMEM  CAL_C_IADCOFFSET;
+struct cal_data EEMEM   EE_CAL_DATA_VOLTAGE;
+struct cal_data EEMEM   EE_CAL_DATA_CURRENT;
+
+struct cal_data         CAL_DATA_VOLTAGE;
+struct cal_data         CAL_DATA_CURRENT;
 
 #define NO_SELECTED_CAL 0xff
 
@@ -100,10 +98,8 @@ static enum cal_cmd try_actions(void)
 struct cal_config {
     uint16_t setpoint_lo;
     uint16_t setpoint_hi;
-    uint32_t *c_dacslope_numer;
-    uint16_t *c_dacoffset;
-    uint32_t *c_adcslope_numer;
-    uint16_t *c_adcoffset;
+    struct cal_data *ee_cal_data;
+    struct cal_data *cal_data;
     void (*set_value)(uint16_t);
     void (*initialize)(void);
     char user_msg[16];
@@ -118,23 +114,12 @@ static void generic_cal(const __flash struct cal_config *cfg)
 {
     int64_t setpoint_delta = (uint64_t)(cfg->setpoint_hi - cfg->setpoint_lo);
 
-    union {
-        struct {
-            uint32_t dacslope;
-            int16_t dacoffset;
-            uint32_t adcslope;
-            int16_t adcoffset;
-        };
-        uint8_t data[12];
-    } cal = {
-        { eeprom_read_dword(cfg->c_dacslope_numer),
-          eeprom_read_word(cfg->c_dacoffset),
-          eeprom_read_dword(cfg->c_adcslope_numer),
-          eeprom_read_word(cfg->c_adcoffset) }
-    };
+    eeprom_read_block(cfg->cal_data, cfg->ee_cal_data, sizeof(struct cal_data));
 
-    g_cal_data = &cal.data[0];
-    g_cal_data_sz = sizeof(cal.data);
+    struct cal_data *cal = cfg->cal_data;
+
+    g_cal_data = (uint8_t *) cfg->cal_data;
+    g_cal_data_sz = sizeof(struct cal_data);
 
     switch (try_actions()) {
     case CAL_RUN:
@@ -163,16 +148,16 @@ static void generic_cal(const __flash struct cal_config *cfg)
     uint16_t measured_delta = measured_hi - measured_lo;
     uint16_t adc_delta = adc_hi - adc_lo;
 
-    int64_t dacslope_i64 = (CAL_C_DENOM * setpoint_delta) / measured_delta;
-    int64_t dacoffset_i64 = cfg->setpoint_lo - dacslope_i64 * measured_lo / CAL_C_DENOM;
+    int32_t dacslope_i64 = (LINEAR_DENOM * setpoint_delta) / measured_delta;
+    int32_t dacoffset_i64 = cfg->setpoint_lo - dacslope_i64 * measured_lo / LINEAR_DENOM;
 
-    int64_t adcslope_i64 = (CAL_C_DENOM * measured_delta) / adc_delta;
-    int64_t adcoffset_i64 = measured_lo - adcslope_i64 * adc_lo / CAL_C_DENOM;
+    int32_t adcslope_i64 = (LINEAR_DENOM * measured_delta) / adc_delta;
+    int32_t adcoffset_i64 = measured_lo - adcslope_i64 * adc_lo / LINEAR_DENOM;
 
-    cal.dacslope = (uint64_t) dacslope_i64;
-    cal.dacoffset = dacoffset_i64;
-    cal.adcslope = (uint64_t) adcslope_i64;
-    cal.adcoffset = adcoffset_i64;
+    cal->dacslope = dacslope_i64;
+    cal->dacoffset = dacoffset_i64;
+    cal->adcslope = adcslope_i64;
+    cal->adcoffset = adcoffset_i64;
 
     // Finished
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
@@ -189,10 +174,7 @@ static void generic_cal(const __flash struct cal_config *cfg)
         return;
     }
 
-    eeprom_write_dword(cfg->c_dacslope_numer, cal.dacslope);
-    eeprom_write_word(cfg->c_dacoffset, cal.dacoffset);
-    eeprom_write_dword(cfg->c_adcslope_numer, cal.adcslope);
-    eeprom_write_word(cfg->c_adcoffset, cal.adcoffset);
+    eeprom_write_block(cfg->cal_data, cfg->ee_cal_data, sizeof(struct cal_data));
 
     cal_finish();
 }
@@ -217,10 +199,8 @@ static void CAL_FUNCTION_VOLTAGE(void)
     static const __flash struct cal_config cfg = {
         .setpoint_lo = 0x2000u,
         .setpoint_hi = 0xd000u,
-        .c_dacslope_numer  = &CAL_C_VDACSLOPE_NUMER,
-        .c_dacoffset       = &CAL_C_VDACOFFSET,
-        .c_adcslope_numer  = &CAL_C_VADCSLOPE_NUMER,
-        .c_adcoffset       = &CAL_C_VADCOFFSET,
+        .ee_cal_data       = &EE_CAL_DATA_VOLTAGE,
+        .cal_data          = &CAL_DATA_VOLTAGE,
         .set_value = &voltage_set_value,
         .initialize = &voltage_initialize,
         .user_msg = "Measure open ckt",
@@ -253,10 +233,8 @@ static void CAL_FUNCTION_CURRENT(void)
     static const __flash struct cal_config cfg = {
         .setpoint_lo = 64u << 1,    // about 50mA
         .setpoint_hi = 321u << 1,   // about 250mA
-        .c_dacslope_numer  = &CAL_C_IDACSLOPE_NUMER,
-        .c_dacoffset       = &CAL_C_IDACOFFSET,
-        .c_adcslope_numer  = &CAL_C_IADCSLOPE_NUMER,
-        .c_adcoffset       = &CAL_C_IADCOFFSET,
+        .ee_cal_data       = &EE_CAL_DATA_CURRENT,
+        .cal_data          = &CAL_DATA_CURRENT,
         .set_value = &current_set_value,
         .initialize = &current_initialize,
         .user_msg = "Measure shrt ckt",
@@ -267,15 +245,18 @@ static void CAL_FUNCTION_CURRENT(void)
 }
 
 
-/**
- * Run calibration. Dispatches to a cal routine function if one is selected.
- */
 void cal_run(void)
 {
     uint8_t cal = g_selected_cal;
     if (cal < N_CAL_ROUTINES) {
         CAL_FUNCTIONS[cal]();
     }
+}
+
+void cal_init(void)
+{
+    eeprom_read_block(&CAL_DATA_VOLTAGE, &EE_CAL_DATA_VOLTAGE, sizeof(struct cal_data));
+    eeprom_read_block(&CAL_DATA_CURRENT, &EE_CAL_DATA_CURRENT, sizeof(struct cal_data));
 }
 
 const __flash char *CAL_NAMES[] = {

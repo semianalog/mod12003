@@ -5,6 +5,7 @@
 #include "cal.h"
 #include "timers.h"
 #include "analog.h"
+#include "misc_math.h"
 
 static const int32_t    ADC_LOWPASS_DENOM           = INT32_C(32768);
 static int32_t          gs_cur_voltage_avg_numer    = 0;
@@ -48,70 +49,25 @@ void psu_vset(uint16_t mv)
 void psu_update(void)
 {
     int32_t mv = gs_voltage_setpoint - gs_correction_mv;
-
-    int64_t vslope = (uint64_t)(eeprom_read_dword(&CAL_C_VDACSLOPE_NUMER));
-    int64_t voffset = (int16_t)(eeprom_read_word(&CAL_C_VDACOFFSET));
-
-    int64_t word_i64 = (vslope * mv) / CAL_C_DENOM + voffset;
-
-    if (word_i64 < 0) {
-        word_i64 = 0;
-    } else if (word_i64 > UINT16_MAX) {
-        word_i64 = UINT16_MAX;
-    }
-
-    uint16_t word = (uint16_t)(word_i64);
+    uint16_t word = linear(CAL_DATA_VOLTAGE.dacslope, mv, CAL_DATA_VOLTAGE.dacoffset);
     vdac_set(word);
 }
 
 uint16_t psu_vget(void)
 {
     uint16_t adc_word = gs_cur_voltage_avg_numer / ADC_LOWPASS_DENOM;
-    int64_t slope = (uint64_t)(eeprom_read_dword(&CAL_C_VADCSLOPE_NUMER));
-    int64_t voffset = (int16_t)(eeprom_read_word(&CAL_C_VADCOFFSET));
-
-    int64_t mv_i64 = (slope * adc_word) / CAL_C_DENOM + voffset;
-
-    if (mv_i64 < 0) {
-        mv_i64 = 0;
-    } else if (mv_i64 > UINT16_MAX) {
-        mv_i64 = UINT16_MAX;
-    }
-
-    return (uint16_t) mv_i64;
+    return linear(CAL_DATA_VOLTAGE.adcslope, adc_word, CAL_DATA_VOLTAGE.adcoffset);
 }
 
 uint16_t psu_iget(void)
 {
     uint16_t adc_word = gs_cur_current_avg_numer / ADC_LOWPASS_DENOM;
-    int64_t slope = (uint64_t)(eeprom_read_dword(&CAL_C_IADCSLOPE_NUMER));
-    int64_t offset = (int16_t)(eeprom_read_word(&CAL_C_IADCOFFSET));
-
-    int64_t ma_i64 = (slope * adc_word) / CAL_C_DENOM + offset;
-
-    if (ma_i64 < 0) {
-        ma_i64 = 0;
-    } else if (ma_i64 > UINT16_MAX) {
-        ma_i64 = UINT16_MAX;
-    }
-
-    return (uint16_t) ma_i64;
+    return linear(CAL_DATA_CURRENT.adcslope, adc_word, CAL_DATA_CURRENT.adcoffset);
 }
 
 void psu_iset(uint16_t ma)
 {
-    int64_t slope = (uint64_t)(eeprom_read_dword(&CAL_C_IDACSLOPE_NUMER));
-    int64_t offset = (int16_t)(eeprom_read_word(&CAL_C_IDACOFFSET));
-
-    int64_t word_i64 = (slope * ma) / CAL_C_DENOM + offset;
-
-    if (word_i64 < 0) {
-        word_i64 = 0;
-    } else if (word_i64 > UINT16_MAX) {
-        word_i64 = UINT16_MAX;
-    }
-
-    uint16_t word = (uint16_t)(word_i64);
+    uint16_t word = linear(CAL_DATA_CURRENT.dacslope, ma, CAL_DATA_CURRENT.dacoffset);
     idac_set(word);
 }
 
