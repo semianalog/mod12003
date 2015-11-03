@@ -108,10 +108,11 @@ void send_msg(uint8_t addr, uint8_t cmd, const volatile void *data, uint16_t dat
 
 void send_msg_F(uint8_t addr, uint8_t cmd, const __flash void *data, uint16_t datalen);
 
-/**
- * Shortcut to send an empty ACK message.
- */
+/// Shortcut to send an empty ACK message.
 void send_ack(void);
+
+/// Shortcut to send an empty NACK_DATA message.
+void send_nack_data(void);
 
 /**
  * Check if the received data had a certain length. If not, send a NACK and

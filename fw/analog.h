@@ -35,25 +35,23 @@ static const uint16_t   VOLTAGE_WINDUP_LIMIT_MV     = 32;
 static const int32_t    ADC_LOWPASS_DIVISOR         = 16;
 
 
-/**
- * Minimum overhead between preregulator and postregulator, in mV
- */
+/// Minimum overhead between preregulator and postregulator, in mV
 static const uint16_t   REGULATOR_HEADROOM_LIMIT_MV = 2500;
 
-/**
- * Reference voltage, in mV
- */
+/// Reference voltage (mV)
 static const uint16_t   VREF_NOMINAL_MV             = 2048;
 
-/**
- * Preregulation sense divider ratio
- */
+/// Preregulation sense divider ratio
 static const uint16_t   PREREG_DIV_NUMER            = 1;
 static const uint16_t   PREREG_DIV_DENOM            = 12;
 
-/**
- * Nominal system input voltage, in mV
- */
+/// Nominal system input voltage (mV)
 static const uint16_t   INPUT_NOMINAL_MV            = 24000;
+
+/// Allowed maximum output voltage (mV)
+static const uint16_t   OUTPUT_MAX_MV               = 20500;
+
+/// Allowed maximum output current (mA)
+static const uint16_t   OUTPUT_MAX_MA               = 3050;
 
 #endif // _ANALOG_H

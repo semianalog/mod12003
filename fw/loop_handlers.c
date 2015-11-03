@@ -1,6 +1,7 @@
 #include "config.h"
 #include "loop.h"
 #include "hardware.h"
+#include "analog.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -15,10 +16,15 @@ void send_ack(void)
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }
 
+void send_nack_data(void)
+{
+    send_msg(LOOP_ADDR_RESPONSE, CMD_NACK_DATA, NULL, 0);
+}
+
 bool check_datalen(uint8_t len)
 {
     if (g_loop_msg.datalen != len) {
-        send_msg(LOOP_ADDR_RESPONSE, CMD_NACK_DATA, NULL, 0);
+        send_nack_data();
         return true;
     } else {
         return false;
@@ -75,8 +81,12 @@ static void cmd_set_voltage(void)
     if (check_datalen(4)) return;
     uint32_t millivolts = U8_to_U32(g_loop_msg.data[0], g_loop_msg.data[1],
             g_loop_msg.data[2], g_loop_msg.data[3]);
-    psu_vset((uint16_t) millivolts);
-    send_ack();
+    if (millivolts > OUTPUT_MAX_MV) {
+        send_nack_data();
+    } else {
+        psu_vset(millivolts);
+        send_ack();
+    }
 }
 
 static void cmd_set_current(void)
@@ -84,8 +94,13 @@ static void cmd_set_current(void)
     if (check_datalen(4)) return;
     uint32_t microamps = U8_to_U32(g_loop_msg.data[0], g_loop_msg.data[1],
             g_loop_msg.data[2], g_loop_msg.data[3]);
-    psu_iset((uint16_t) (microamps / 1000));
-    send_ack();
+    uint16_t milliamps = microamps / 1000;
+    if (milliamps > OUTPUT_MAX_MA) {
+        send_nack_data();
+    } else {
+        psu_iset(milliamps);
+        send_ack();
+    }
 }
 
 static void cmd_q_output(void)
