@@ -113,6 +113,12 @@ void send_msg_F(uint8_t addr, uint8_t cmd, const __flash void *data, uint16_t da
  */
 void send_ack(void);
 
+/**
+ * Check if the received data had a certain length. If not, send a NACK and
+ * return true. Otherwise, return false.
+ */
+bool check_datalen(uint8_t len);
+
 /******************************************************************************
  * Low-level functions
  */
