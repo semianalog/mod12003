@@ -40,9 +40,23 @@ void psu_vset(uint16_t mv);
 /**
  * Get the output voltage.
  *
- * @return output voltage in mv
+ * @return output voltage in mV
  */
 uint16_t psu_vget(void);
+
+/**
+ * Get the output current.
+ *
+ * @return output current in mA
+ */
+uint16_t psu_iget(void);
+
+/**
+ * Set the output current. Does not enable the regulator.
+ *
+ * @param ma output current, in milliamps
+ */
+void psu_iset(uint16_t ma);
 
 /**
  * Update the DACs.

@@ -55,8 +55,17 @@ static void cmd_output_en()
 
 static void cmd_set_voltage(void)
 {
-    uint16_t millivolts = U8_to_U16(g_loop_msg.data[0], g_loop_msg.data[1]);
-    psu_vset(millivolts);
+    uint32_t millivolts = U8_to_U32(g_loop_msg.data[0], g_loop_msg.data[1],
+            g_loop_msg.data[2], g_loop_msg.data[3]);
+    psu_vset((uint16_t) millivolts);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+}
+
+static void cmd_set_current(void)
+{
+    uint32_t microamps = U8_to_U32(g_loop_msg.data[0], g_loop_msg.data[1],
+            g_loop_msg.data[2], g_loop_msg.data[3]);
+    psu_iset((uint16_t) (microamps / 1000));
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }
 
@@ -83,8 +92,15 @@ static void cmd_q_output(void)
 static void cmd_q_voltage(void)
 {
     uint16_t mv = psu_vget();
-    uint8_t buffer[2] = {U16_BYTE(mv, 0), U16_BYTE(mv, 1)};
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, 2);
+    int32_t mv_i32 = (uint32_t) mv;
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) &mv_i32, 4);
+}
+
+static void cmd_q_current(void)
+{
+    uint16_t ma = psu_iget();
+    int32_t ua_i32 = (uint32_t) ma * 1000;
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) &ua_i32, 4);
 }
 
 static void cmd_q_prereg(void)
@@ -103,8 +119,10 @@ void (* const __flash CMD_HANDLERS[256])() = {
 
     [CMD_OUTPUT_EN]  = &cmd_output_en,
     [CMD_SET_VOLTAGE] = &cmd_set_voltage,
+    [CMD_SET_CURRENT] = &cmd_set_current,
     [CMD_QOUTPUT]    = &cmd_q_output,
     [CMD_QVOLTAGE]   = &cmd_q_voltage,
+    [CMD_QCURRENT]   = &cmd_q_current,
     [CMD_QPREREG]    = &cmd_q_prereg,
 
     [CMD_CAL_COUNT]  = &cmd_cal_count,

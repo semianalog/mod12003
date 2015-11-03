@@ -7,12 +7,15 @@
 /******************************************************************************
  * Calibration constants
  */
+static const int64_t    CAL_C_DENOM             = 65536;
 extern uint32_t EEMEM   CAL_C_VDACSLOPE_NUMER;
-static const int64_t    CAL_C_VDACSLOPE_DENOM   = 65536;
 extern uint16_t EEMEM   CAL_C_VDACOFFSET; // stored signed
 extern uint32_t EEMEM   CAL_C_VADCSLOPE_NUMER;
-static const int64_t    CAL_C_VADCSLOPE_DENOM   = 65536;
 extern uint16_t EEMEM   CAL_C_VADCOFFSET; // stored signed
+extern uint32_t EEMEM   CAL_C_IDACSLOPE_NUMER;
+extern uint16_t EEMEM   CAL_C_IDACOFFSET; // stored signed
+extern uint32_t EEMEM   CAL_C_IADCSLOPE_NUMER;
+extern uint16_t EEMEM   CAL_C_IADCOFFSET; // stored signed
 
 /******************************************************************************
  * Types used internally by the calibration system

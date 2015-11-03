@@ -25,9 +25,7 @@ int main(void)
     adc_init();
 
     vdac_init();
-    vdac_set(0x4000uL);
-
-    PSET(P_ISET);   // full current for now
+    idac_init();
 
     timers_init();
     timer_pwmset_ovpth(255);

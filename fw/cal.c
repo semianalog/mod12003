@@ -12,6 +12,10 @@ uint32_t EEMEM  CAL_C_VDACSLOPE_NUMER;
 uint16_t EEMEM  CAL_C_VDACOFFSET;
 uint32_t EEMEM  CAL_C_VADCSLOPE_NUMER;
 uint16_t EEMEM  CAL_C_VADCOFFSET;
+uint32_t EEMEM  CAL_C_IDACSLOPE_NUMER;
+uint16_t EEMEM  CAL_C_IDACOFFSET;
+uint32_t EEMEM  CAL_C_IADCSLOPE_NUMER;
+uint16_t EEMEM  CAL_C_IADCOFFSET;
 
 #define NO_SELECTED_CAL 0xff
 
@@ -90,19 +94,29 @@ static enum cal_cmd try_actions(void)
     }
 }
 
-/******************************************************************************
- * Calibration routine: voltage
- *
- * Sets two output voltages, asks the user to measure them, and compares to the
- * ADC's measurement.
+/**
+ * Parameters for generic_cal, kept in progmem
  */
+struct cal_config {
+    uint16_t setpoint_lo;
+    uint16_t setpoint_hi;
+    uint32_t *c_dacslope_numer;
+    uint16_t *c_dacoffset;
+    uint32_t *c_adcslope_numer;
+    uint16_t *c_adcoffset;
+    void (*set_value)(uint16_t);
+    void (*initialize)(void);
+    char user_msg[16];
+    char user_unit[4];
+    uint8_t adc_channel;
+};
 
-static const char __flash CAL_NAME_VOLTAGE[] = "Voltage";
-static void CAL_FUNCTION_VOLTAGE(void)
+/**
+ * Generic calibration routine, parametized for each function
+ */
+static void generic_cal(const __flash struct cal_config *cfg)
 {
-    const uint16_t SETPOINT_LO = 0x2000u;
-    const uint16_t SETPOINT_HI = 0xd000u;
-    const int64_t SETPOINT_DELTA = (uint64_t)(SETPOINT_HI - SETPOINT_LO);
+    int64_t setpoint_delta = (uint64_t)(cfg->setpoint_hi - cfg->setpoint_lo);
 
     union {
         struct {
@@ -113,10 +127,10 @@ static void CAL_FUNCTION_VOLTAGE(void)
         };
         uint8_t data[12];
     } cal = {
-        { eeprom_read_dword(&CAL_C_VDACSLOPE_NUMER),
-          eeprom_read_word(&CAL_C_VDACOFFSET),
-          eeprom_read_dword(&CAL_C_VADCSLOPE_NUMER),
-          eeprom_read_word(&CAL_C_VADCOFFSET) }
+        { eeprom_read_dword(cfg->c_dacslope_numer),
+          eeprom_read_word(cfg->c_dacoffset),
+          eeprom_read_dword(cfg->c_adcslope_numer),
+          eeprom_read_word(cfg->c_adcoffset) }
     };
 
     g_cal_data = &cal.data[0];
@@ -135,33 +149,29 @@ static void CAL_FUNCTION_VOLTAGE(void)
         g_cal_status.msg_len = 0;
     }
 
-    const __flash char *user_msg  = FSTR("Measure open ckt");
-    const __flash char *user_unit = FSTR("mV");
+    cfg->initialize();
+    cfg->set_value(cfg->setpoint_lo);
+    if (get_user_data(cfg->user_msg, cfg->user_unit)) return;
+    uint16_t measured_lo = g_user_data;
+    uint16_t adc_lo = (uint16_t)(adc_sample_n(cfg->adc_channel, 1024) / 1024);
 
-    psu_prereg_vset(25000);
-    vdac_set(SETPOINT_LO);
-    if (get_user_data(user_msg, user_unit)) return;
-    uint16_t measured_lo_mv = g_user_data;
-    uint16_t adc_lo = (uint16_t)(adc_sample_n(ADC_VSENSE, 1024) / 1024);
+    cfg->set_value(cfg->setpoint_hi);
+    if (get_user_data(cfg->user_msg, cfg->user_unit)) return;
+    uint16_t measured_hi = g_user_data;
+    uint16_t adc_hi = (uint16_t)(adc_sample_n(cfg->adc_channel, 1024) / 1024);
 
-    vdac_set(SETPOINT_HI);
-    if (get_user_data(user_msg, user_unit)) return;
-    uint16_t measured_hi_mv = g_user_data;
-    uint16_t adc_hi = (uint16_t)(adc_sample_n(ADC_VSENSE, 1024) / 1024);
-
-    // Compute the calibration constants
-    uint16_t measured_delta_mv = measured_hi_mv - measured_lo_mv;
+    uint16_t measured_delta = measured_hi - measured_lo;
     uint16_t adc_delta = adc_hi - adc_lo;
 
-    int64_t dacslope_i64 = (CAL_C_VDACSLOPE_DENOM * SETPOINT_DELTA) / measured_delta_mv;
-    int64_t dacoffset_i64 = SETPOINT_LO - dacslope_i64 * measured_lo_mv / CAL_C_VDACSLOPE_DENOM;
+    int64_t dacslope_i64 = (CAL_C_DENOM * setpoint_delta) / measured_delta;
+    int64_t dacoffset_i64 = cfg->setpoint_lo - dacslope_i64 * measured_lo / CAL_C_DENOM;
 
-    int64_t adcslope_i64 = (CAL_C_VADCSLOPE_DENOM * measured_delta_mv) / adc_delta;
-    int64_t adcoffset_i64 = measured_lo_mv - adcslope_i64 * adc_lo / CAL_C_VADCSLOPE_DENOM;
+    int64_t adcslope_i64 = (CAL_C_DENOM * measured_delta) / adc_delta;
+    int64_t adcoffset_i64 = measured_lo - adcslope_i64 * adc_lo / CAL_C_DENOM;
 
-    cal.dacslope = (uint64_t)dacslope_i64;
+    cal.dacslope = (uint64_t) dacslope_i64;
     cal.dacoffset = dacoffset_i64;
-    cal.adcslope = (uint64_t)adcslope_i64;
+    cal.adcslope = (uint64_t) adcslope_i64;
     cal.adcoffset = adcoffset_i64;
 
     // Finished
@@ -170,10 +180,8 @@ static void CAL_FUNCTION_VOLTAGE(void)
         g_cal_status.msg_len = 0;
     }
 
-
     switch (try_actions()) {
     case CAL_SAVE:
-        break;
     case CAL_RUN:
         break;
     case CAL_ABORT:
@@ -181,30 +189,103 @@ static void CAL_FUNCTION_VOLTAGE(void)
         return;
     }
 
-    eeprom_write_dword(&CAL_C_VDACSLOPE_NUMER, cal.dacslope);
-    eeprom_write_word(&CAL_C_VDACOFFSET, cal.dacoffset);
-    eeprom_write_dword(&CAL_C_VADCSLOPE_NUMER, cal.adcslope);
-    eeprom_write_word(&CAL_C_VADCOFFSET, cal.adcoffset);
+    eeprom_write_dword(cfg->c_dacslope_numer, cal.dacslope);
+    eeprom_write_word(cfg->c_dacoffset, cal.dacoffset);
+    eeprom_write_dword(cfg->c_adcslope_numer, cal.adcslope);
+    eeprom_write_word(cfg->c_adcoffset, cal.adcoffset);
 
     cal_finish();
 }
+
+/******************************************************************************
+ * Calibration routine: voltage
+ *
+ * Sets two output voltages, asks the user to measure them, and compares to the
+ * ADC's measurement.
+ */
+
+static void voltage_set_value(uint16_t v) {
+    vdac_set(v);
+}
+static void voltage_initialize(void) {
+    idac_set(64u);
+    psu_prereg_vset(25000);
+}
+static const char __flash CAL_NAME_VOLTAGE[] = "Voltage";
+static void CAL_FUNCTION_VOLTAGE(void)
+{
+    static const __flash struct cal_config cfg = {
+        .setpoint_lo = 0x2000u,
+        .setpoint_hi = 0xd000u,
+        .c_dacslope_numer  = &CAL_C_VDACSLOPE_NUMER,
+        .c_dacoffset       = &CAL_C_VDACOFFSET,
+        .c_adcslope_numer  = &CAL_C_VADCSLOPE_NUMER,
+        .c_adcoffset       = &CAL_C_VADCOFFSET,
+        .set_value = &voltage_set_value,
+        .initialize = &voltage_initialize,
+        .user_msg = "Measure open ckt",
+        .user_unit = "mV",
+        .adc_channel = ADC_VSENSE,
+    };
+    generic_cal(&cfg);
+}
+
+/******************************************************************************
+ * Calibration routine: current
+ *
+ * Sets two output currents, asks the user to measure them, and compares to the
+ * ADC's measurement.
+ */
+
+static void current_set_value(uint16_t v) {
+    idac_set(v);
+}
+static void current_initialize(void) {
+    psu_prereg_vset(2500);
+    vdac_set(0x1000);
+}
+static const char __flash CAL_NAME_CURRENT[] = "Current";
+static void CAL_FUNCTION_CURRENT(void)
+{
+    // XXX: raise SETPOINT_HI - it's low now because I'm testing using a limited
+    // input power source
+
+    static const __flash struct cal_config cfg = {
+        .setpoint_lo = 64u << 1,    // about 50mA
+        .setpoint_hi = 321u << 1,   // about 250mA
+        .c_dacslope_numer  = &CAL_C_IDACSLOPE_NUMER,
+        .c_dacoffset       = &CAL_C_IDACOFFSET,
+        .c_adcslope_numer  = &CAL_C_IADCSLOPE_NUMER,
+        .c_adcoffset       = &CAL_C_IADCOFFSET,
+        .set_value = &current_set_value,
+        .initialize = &current_initialize,
+        .user_msg = "Measure shrt ckt",
+        .user_unit = "mA",
+        .adc_channel = ADC_ISENSE,
+    };
+    generic_cal(&cfg);
+}
+
 
 /**
  * Run calibration. Dispatches to a cal routine function if one is selected.
  */
 void cal_run(void)
 {
-    if (g_selected_cal < N_CAL_ROUTINES) {
-        CAL_FUNCTIONS[g_selected_cal]();
+    uint8_t cal = g_selected_cal;
+    if (cal < N_CAL_ROUTINES) {
+        CAL_FUNCTIONS[cal]();
     }
 }
 
 const __flash char *CAL_NAMES[] = {
     CAL_NAME_VOLTAGE,
+    CAL_NAME_CURRENT,
 };
 
 const __flash cal_routine_fp CAL_FUNCTIONS[] = {
-    CAL_FUNCTION_VOLTAGE,
+    &CAL_FUNCTION_VOLTAGE,
+    &CAL_FUNCTION_CURRENT,
 };
 
 const uint8_t N_CAL_ROUTINES = sizeof(CAL_FUNCTIONS)/sizeof(CAL_FUNCTIONS[0]);
