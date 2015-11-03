@@ -115,7 +115,7 @@ uint16_t psu_prereg_vget(void)
 void psu_prereg_vset(uint16_t mv)
 {
     // As before, PWM_TOP + 1 trades a bit of accuracy for efficiency.
-    uint16_t dutycyc = (((uint16_t) PWM_TOP + 1) * mv) / INPUT_NOMINAL_MV;
+    uint16_t dutycyc = (((uint32_t) PWM_TOP + 1) * mv) / INPUT_NOMINAL_MV;
     if (dutycyc > PWM_TOP) {
         dutycyc = PWM_TOP;
     }
