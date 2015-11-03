@@ -10,14 +10,19 @@
 #include "cal.h"
 #include "psu.h"
 
-static void cmd_nop()
+void send_ack(void)
 {
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }
 
+static void cmd_nop()
+{
+    send_ack();
+}
+
 static void cmd_idn()
 {
-    send_msg_F(LOOP_ADDR_RESPONSE, CMD_ACK, (const __flash uint8_t *) FSTR(IDN_STR), sizeof(IDN_STR) - 1);
+    send_msg_F(LOOP_ADDR_RESPONSE, CMD_ACK, FSTR(IDN_STR), sizeof(IDN_STR) - 1);
 }
 
 static void cmd_serial()
@@ -38,7 +43,7 @@ static void cmd_serial()
 
     char buffer[6];
     sprintf(buffer, "%"PRIu16, crc);
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) buffer, strlen(buffer));
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, strlen(buffer));
 }
 
 static void cmd_count()
@@ -50,7 +55,7 @@ static void cmd_count()
 static void cmd_output_en()
 {
     psu_enable(g_loop_msg.data[0]);
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+    send_ack();
 }
 
 static void cmd_set_voltage(void)
@@ -58,7 +63,7 @@ static void cmd_set_voltage(void)
     uint32_t millivolts = U8_to_U32(g_loop_msg.data[0], g_loop_msg.data[1],
             g_loop_msg.data[2], g_loop_msg.data[3]);
     psu_vset((uint16_t) millivolts);
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+    send_ack();
 }
 
 static void cmd_set_current(void)
@@ -66,7 +71,7 @@ static void cmd_set_current(void)
     uint32_t microamps = U8_to_U32(g_loop_msg.data[0], g_loop_msg.data[1],
             g_loop_msg.data[2], g_loop_msg.data[3]);
     psu_iset((uint16_t) (microamps / 1000));
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
+    send_ack();
 }
 
 static void cmd_q_output(void)
@@ -93,14 +98,14 @@ static void cmd_q_voltage(void)
 {
     uint16_t mv = psu_vget();
     int32_t mv_i32 = (uint32_t) mv;
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) &mv_i32, 4);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &mv_i32, sizeof(mv_i32));
 }
 
 static void cmd_q_current(void)
 {
     uint16_t ma = psu_iget();
     int32_t ua_i32 = (uint32_t) ma * 1000;
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, (uint8_t *) &ua_i32, 4);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &ua_i32, sizeof(ua_i32));
 }
 
 static void cmd_q_prereg(void)
