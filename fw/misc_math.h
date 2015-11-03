@@ -12,5 +12,12 @@ static const int64_t    LINEAR_DENOM    = 65536;
  */
 uint16_t linear(int32_t m_numer, uint16_t x, int16_t b) __attribute__((noinline));
 
+/**
+ * Lightweight u16-to-string routine.
+ *
+ * @param str - string buffer, must have at least six bytes
+ * @param num - number to convert
+ */
+void u16_to_str(char *s, uint16_t num);
 
 #endif // _MISC_MATH_H

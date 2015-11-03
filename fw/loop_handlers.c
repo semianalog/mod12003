@@ -2,6 +2,7 @@
 #include "loop.h"
 #include "hardware.h"
 #include "analog.h"
+#include "misc_math.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -58,7 +59,7 @@ static void cmd_serial()
     uint16_t crc = crc_get_checksum();
 
     char buffer[6];
-    sprintf(buffer, "%"PRIu16, crc);
+    u16_to_str(buffer, crc);
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, strlen(buffer));
 }
 
