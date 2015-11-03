@@ -1,6 +1,7 @@
 #include "cal.h"
 #include "loop.h"
 #include "hardware.h"
+#include "psu.h"
 #include <afw/misc.h>
 #include <afw/pins.h>
 #include <string.h>
@@ -137,6 +138,7 @@ static void CAL_FUNCTION_VOLTAGE(void)
     const __flash char *user_msg  = FSTR("Measure open ckt");
     const __flash char *user_unit = FSTR("mV");
 
+    psu_prereg_vset(25000);
     vdac_set(SETPOINT_LO);
     if (get_user_data(user_msg, user_unit)) return;
     uint16_t measured_lo_mv = g_user_data;
