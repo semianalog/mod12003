@@ -7,6 +7,30 @@
 #include <stdbool.h>
 
 /**
+ * Enable or disable the power supply
+ */
+void psu_enable(bool enabled);
+
+/**
+ * Query power supply enabled status
+ */
+bool psu_enabled(void);
+
+/**
+ * PSU regulation modes
+ */
+enum psu_reg_mode {
+    PSU_REG_CV,
+    PSU_REG_CC,
+    PSU_OSCILLATING,
+};
+
+/**
+ * Query regulation mode
+ */
+enum psu_reg_mode psu_get_reg_mode(void);
+
+/**
  * Set the output voltage. Does not enable the regulator.
  *
  * @param mv output voltage, in millivolts

@@ -34,7 +34,7 @@
 #define CMD_OUTPUT_EN   0x80    // payload is one byte, zero=disable nonzero=enable
 #define CMD_SET_VOLTAGE 0x81    // set output voltage. payload is a little-endian int32_t millivolts
 #define CMD_SET_CURRENT 0x82    // set output current. payload is a little-endian int32_t microamps
-#define CMD_QOUTPUT     0x90    // return actual output mode: 0 = off, 1 = CV, 2 = CC
+#define CMD_QOUTPUT     0x90    // return actual output mode: 0 = off, 1 = CV, 2 = CC, ff = fault
 #define CMD_QVOLTAGE    0x91    // return actual output voltage, little-endian int32_t millivolts
 #define CMD_QCURRENT    0x92    // return actual output current, little-endian int32_t microamps
 

@@ -42,7 +42,6 @@ int main(void)
     uint8_t channels_scanned = 0;
 
     for(;;) {
-        PTGL(P_LEDCV);
         cal_run();
         if (adc_cycle()) {
             ++channels_scanned;

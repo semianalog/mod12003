@@ -54,6 +54,26 @@ static void cmd_set_voltage(void)
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, NULL, 0);
 }
 
+static void cmd_q_output(void)
+{
+    uint8_t status = 0;
+    if (psu_enabled()) {
+        enum psu_reg_mode mode = psu_get_reg_mode();
+        switch (mode) {
+        case PSU_REG_CV:
+            status = 1;
+            break;
+        case PSU_REG_CC:
+            status = 2;
+            break;
+        case PSU_OSCILLATING:
+        default:
+            status = 0xff;
+        }
+    }
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &status, 1);
+}
+
 static void cmd_q_voltage(void)
 {
     uint16_t mv = psu_vget();
@@ -76,6 +96,7 @@ void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_ACK] = &cmd_nop,
 
     [CMD_SET_VOLTAGE] = &cmd_set_voltage,
+    [CMD_QOUTPUT]    = &cmd_q_output,
     [CMD_QVOLTAGE]   = &cmd_q_voltage,
     [CMD_QPREREG]    = &cmd_q_prereg,
 

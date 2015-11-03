@@ -1,3 +1,4 @@
+#include <afw/pins.h>
 #include "psu.h"
 #include "hardware.h"
 #include "cal.h"
@@ -10,6 +11,30 @@ static int32_t          gs_voltage_setpoint         = 0;
 static uint16_t         gs_last_voltage             = 0;
 static bool             gs_vset_updated             = false;
 static int32_t          gs_correction_mv            = 0;
+
+void psu_enable(bool enabled)
+{
+    PPUT(P_LINREG_EN, enabled);
+}
+
+bool psu_enabled(void)
+{
+    return PGET(P_LINREG_EN);
+}
+
+enum psu_reg_mode psu_get_reg_mode(void)
+{
+    bool cv = PGET(P_VLIM);
+    bool cc = PGET(P_ILIM);
+
+    if ((cc && cv) || (!cc && !cv)) {
+        return PSU_OSCILLATING;
+    } else if (cc) {
+        return PSU_REG_CC;
+    } else {
+        return PSU_REG_CV;
+    }
+}
 
 void psu_vset(uint16_t mv)
 {
@@ -74,6 +99,24 @@ void psu_fast_cycle(void)
 void psu_slow_cycle(void)
 {
     static int32_t s_voltage_error_accum = 0;
+    static uint8_t s_tickcount = 0;
+
+    ++s_tickcount;
+    enum psu_reg_mode mode = psu_get_reg_mode();
+    switch (mode) {
+    case PSU_REG_CV:
+        PSET(P_LEDCV);
+        PCLR(P_LEDCC);
+        break;
+    case PSU_REG_CC:
+        PSET(P_LEDCC);
+        PCLR(P_LEDCV);
+        break;
+    case PSU_OSCILLATING:
+    default:
+        PPUT(P_LEDCC, s_tickcount % 1);
+        PPUT(P_LEDCV, !(s_tickcount % 1));
+    }
 
     if (gs_vset_updated) {
         // Clear everything out
