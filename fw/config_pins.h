@@ -5,7 +5,7 @@ X(A,    1,  P_REFGND,       D_IN,   0,      0)
 X(A,    2,  P_ISET,         D_OUT,  0,      0)
 X(A,    3,  P_ISENSE,       D_IN,   0,      0)
 X(A,    4,  P_VSENSE,       D_IN,   0,      0)
-X(A,    5,  PA5,            D_IN,   0,      0)
+X(A,    5,  P_LINREG_SAT,   D_OUT,  0,      PORT_OPC_WIREDOR_gc)
 X(A,    6,  PA6,            D_IN,   0,      0)
 X(A,    7,  P_TEMP,         D_IN,   0,      0)
 

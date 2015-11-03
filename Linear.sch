@@ -112,7 +112,7 @@ F 4 "PNP ONSEMI D45H11" H 7900 1700 60  0001 C CNN "BOM"
 $EndComp
 Text Notes 6850 850  0    50   ~ 0
 On heatsink
-Text HLabel 1100 4500 0    50   Input ~ 0
+Text HLabel 1100 4700 0    50   Input ~ 0
 VSET
 Text HLabel 1100 6200 0    50   Input ~ 0
 ISET
@@ -853,7 +853,7 @@ Wire Wire Line
 Wire Wire Line
 	1100 6200 5600 6200
 Wire Wire Line
-	1100 4500 5600 4500
+	1100 4700 5500 4700
 Wire Wire Line
 	5500 6000 5600 6000
 Wire Wire Line
@@ -866,7 +866,7 @@ Wire Wire Line
 Wire Wire Line
 	6000 5700 6400 5700
 Wire Wire Line
-	5500 4300 5600 4300
+	4700 4300 5600 4300
 Wire Wire Line
 	5500 3700 5500 4300
 Wire Wire Line
@@ -1033,7 +1033,7 @@ Text Notes 1200 2650 0    50   ~ 0
 (0.01V)
 Text Notes 1200 4150 0    50   ~ 0
 (12.01V)
-Text Notes 1200 4450 0    50   ~ 0
+Text Notes 1200 4800 0    50   ~ 0
 (1.09V)
 Text Notes 1200 5150 0    50   ~ 0
 (0.01V)
@@ -1100,17 +1100,17 @@ Connection ~ 4200 3000
 $Comp
 L TESTPOINT TP8
 U 1 1 55E06BC9
-P 4200 4400
-F 0 "TP8" H 4260 4525 50  0000 L CNN
-F 1 "VSET" H 4260 4425 50  0000 L CNN
-F 2 "conn-test:TEST-SMD-SMALL" H 4260 4375 50  0001 L CNN
-F 3 "" H 4200 4400 50  0000 C CNN
-	1    4200 4400
+P 4900 4600
+F 0 "TP8" H 4960 4725 50  0000 L CNN
+F 1 "VSET" H 4960 4625 50  0000 L CNN
+F 2 "conn-test:TEST-SMD-SMALL" H 4960 4575 50  0001 L CNN
+F 3 "" H 4900 4600 50  0000 C CNN
+	1    4900 4600
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4200 4400 4200 4500
-Connection ~ 4200 4500
+	4900 4600 4900 4700
+Connection ~ 4900 4700
 $Comp
 L TESTPOINT TP9
 U 1 1 55E08634
@@ -1731,4 +1731,17 @@ F 4 "RES SMD 22k 1% [0402]" H 5550 1850 60  0001 C CNN "BOM"
 	1    4800 1300
 	-1   0    0    1   
 $EndComp
+Wire Wire Line
+	5500 4700 5500 4500
+Wire Wire Line
+	5500 4500 5600 4500
+Text HLabel 1100 4600 0    50   Input ~ 0
+FORCE_SAT_L
+Wire Wire Line
+	1100 4600 4700 4600
+Wire Wire Line
+	4700 4600 4700 4300
+Connection ~ 5500 4300
+Text Notes -1750 4650 0    50   ~ 0
+FORCE_SAT_L does not exist on the PCB;\nit was added as a wire to the prototype.
 $EndSCHEMATC

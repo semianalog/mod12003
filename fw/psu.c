@@ -126,8 +126,16 @@ void psu_slow_cycle(void)
             s_voltage_error_accum = 0;
             gs_correction_mv = 0;
             vdac_set(0);
+
+            // Force the regulator to saturate low during the edge of
+            // LINREG_EN, because otherwise it tends to saturate high
+            // and cause output blips due to integrator windup.
+            PSET(P_LINREG_SAT);
             _delay_us(50);
             PSET(P_LINREG_EN);
+            _delay_us(50);
+            PCLR(P_LINREG_SAT);
+
             return;
         }
     } else {

@@ -1068,4 +1068,8 @@ Wire Wire Line
 	7300 4500 7300 2300
 Wire Wire Line
 	7000 3400 7000 1100
+Text HLabel 6300 3200 2    50   Output ~ 0
+FORCE_SAT_L
+Wire Wire Line
+	6300 3200 5400 3200
 $EndSCHEMATC
