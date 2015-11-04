@@ -2,6 +2,7 @@
 #define _MISC_MATH_H
 
 #include <inttypes.h>
+#include <util/atomic.h>
 
 #define NOINLINE    __attribute__((noinline))
 #define PURE        __attribute__((pure))
@@ -22,5 +23,11 @@ uint16_t linear(int32_t m_numer, uint16_t x, int16_t b) NOINLINE PURE;
  * @param num - number to convert
  */
 void u16_to_str(char *s, uint16_t num);
+
+/**
+ * Atomic access macro. Accesses the given variable in an ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+ * and returns the value.
+ */
+#define ATOMIC_ACCESS(v) ({ typeof(v) __temp; ATOMIC_BLOCK(ATOMIC_RESTORESTATE){ __temp = (v); } __temp; })
 
 #endif // _MISC_MATH_H

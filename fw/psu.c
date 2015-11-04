@@ -1,5 +1,6 @@
 #include <afw/pins.h>
 #include <util/delay.h>
+#include <util/atomic.h>
 #include "psu.h"
 #include "hardware.h"
 #include "cal.h"
@@ -7,7 +8,6 @@
 #include "analog.h"
 #include "misc_math.h"
 
-// XXX: check synchronization of these against ISR access
 static const int32_t    ADC_LOWPASS_DENOM           = INT32_C(32768);
 static int32_t          gs_cur_voltage_avg_numer    = 0;
 static int32_t          gs_cur_current_avg_numer    = 0;
@@ -25,7 +25,9 @@ static volatile bool    gs_enabled                  = false;
 
 void psu_enable(bool enabled)
 {
-    gs_enabled = enabled;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        gs_enabled = enabled;
+    }
 }
 
 bool psu_enabled(void)
@@ -35,8 +37,17 @@ bool psu_enabled(void)
 
 enum psu_reg_mode psu_get_reg_mode(void)
 {
-    bool cv = PGET(P_VLIM);
-    bool cc = PGET(P_ILIM);
+    bool cv;
+    bool cc;
+
+    // These don't _need_ to be in an atomic block, but it makes sure they will
+    // be read in close proximity to each other, eliminating false positives for
+    // PSU_OSCILLATING.
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        cv = PGET(P_VLIM);
+        cc = PGET(P_ILIM);
+    }
 
     if ((cc && cv) || (!cc && !cv)) {
         return PSU_OSCILLATING;
@@ -49,21 +60,24 @@ enum psu_reg_mode psu_get_reg_mode(void)
 
 void psu_vset(uint16_t mv)
 {
-    gs_voltage_setpoint = mv;
-    gs_integrator_skip = VOLTAGE_LOOP_SKIPS;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        gs_voltage_setpoint = mv;
+        gs_integrator_skip = VOLTAGE_LOOP_SKIPS;
+    }
 }
 
 uint16_t psu_get_vsetpt(void)
 {
-    return gs_voltage_setpoint;
+    return ATOMIC_ACCESS(gs_voltage_setpoint);
 }
 
 uint16_t psu_get_isetpt(void)
 {
-    return gs_current_setpoint;
+    return ATOMIC_ACCESS(gs_current_setpoint);
 }
 
-void psu_update(void)
+/// Update the DACs
+static void psu_update(void)
 {
     int16_t mv = gs_voltage_setpoint - gs_correction_mv;
     uint16_t word = linear(CAL_DATA_VOLTAGE.dacslope, mv, CAL_DATA_VOLTAGE.dacoffset);
@@ -72,21 +86,25 @@ void psu_update(void)
 
 uint16_t psu_vget(void)
 {
-    uint16_t adc_word = gs_cur_voltage_avg_numer / ADC_LOWPASS_DENOM;
+    uint32_t avg_numer = ATOMIC_ACCESS(gs_cur_voltage_avg_numer);
+    uint16_t adc_word = avg_numer / ADC_LOWPASS_DENOM;
     return linear(CAL_DATA_VOLTAGE.adcslope, adc_word, CAL_DATA_VOLTAGE.adcoffset);
 }
 
 uint16_t psu_iget(void)
 {
-    uint16_t adc_word = gs_cur_current_avg_numer / ADC_LOWPASS_DENOM;
+    uint32_t avg_numer = ATOMIC_ACCESS(gs_cur_current_avg_numer);
+    uint16_t adc_word = avg_numer / ADC_LOWPASS_DENOM;
     return linear(CAL_DATA_CURRENT.adcslope, adc_word, CAL_DATA_CURRENT.adcoffset);
 }
 
 void psu_iset(uint16_t ma)
 {
-    gs_current_setpoint = ma;
     uint16_t word = linear(CAL_DATA_CURRENT.dacslope, ma, CAL_DATA_CURRENT.dacoffset);
-    idac_set(word);
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        gs_current_setpoint = ma;
+        idac_set(word); // XXX - get this out of a potential ISR call
+    }
 }
 
 /**
@@ -209,7 +227,7 @@ void psu_slow_cycle(void)
 
 uint16_t psu_prereg_vget(void)
 {
-    uint32_t adc_word = get_adc_result(ADC_PREREG);
+    uint32_t adc_word = ATOMIC_ACCESS(get_adc_result(ADC_PREREG));
 
     // ADC_TOP + 1 is a tradeoff: a slight loss of accuracy for a
     // much faster divide by 0x8000
@@ -218,7 +236,8 @@ uint16_t psu_prereg_vget(void)
 
 uint16_t psu_temp_get(void)
 {
-    uint16_t adc_word = get_adc_result(ADC_TEMP);
+    uint16_t adc_word = ATOMIC_ACCESS(get_adc_result(ADC_TEMP));
+
     uint16_t mv = adc_word / ((ADC_TOP + 1) / VREF_NOMINAL_MV);
     return linear(TEMP_SLOPE_NUMER, mv, TEMP_SLOPE_OFFSET);
 }
@@ -226,8 +245,8 @@ uint16_t psu_temp_get(void)
 uint16_t psu_powerdis_get_10mW(void)
 {
     uint16_t prereg_mv = psu_prereg_vget();
-    uint16_t out_mv = gs_last_voltage;
     uint16_t out_ma = psu_iget();
+    uint16_t out_mv = ATOMIC_ACCESS(gs_last_voltage);
 
     uint16_t vdrop_mv = out_mv - prereg_mv;
 
@@ -243,5 +262,7 @@ void psu_prereg_vset(uint16_t mv)
     if (dutycyc > PWM_TOP) {
         dutycyc = PWM_TOP;
     }
-    timer_pwmset_prereg(dutycyc);
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        timer_pwmset_prereg(dutycyc);
+    }
 }

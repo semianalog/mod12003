@@ -65,11 +65,6 @@ uint16_t psu_get_vsetpt(void);
 uint16_t psu_get_isetpt(void);
 
 /**
- * Update the DACs.
- */
-void psu_update(void);
-
-/**
  * Runs the fast cycle. This should be called every time a full ADC scan has
  * completed.
  */
