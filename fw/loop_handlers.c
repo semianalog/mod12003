@@ -184,6 +184,8 @@ static void cmd_q_setcurr(void)
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &ua_i32, sizeof(ua_i32));
 }
 
+// ADD_GRAPHED_CALL __vector_40 cmd_.*
+
 void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_NOP] = &cmd_nop,
     [CMD_IDN] = &cmd_idn,

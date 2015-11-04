@@ -186,6 +186,8 @@ static void generic_cal(const __flash struct cal_config *cfg)
  * ADC's measurement.
  */
 
+// ADD_GRAPHED_CALL generic_cal voltage_set_value
+// ADD_GRAPHED_CALL generic_cal voltage_initialize
 static void voltage_set_value(uint16_t v) {
     vdac_set(v);
 }
@@ -217,6 +219,8 @@ static void CAL_FUNCTION_VOLTAGE(void)
  * ADC's measurement.
  */
 
+// ADD_GRAPHED_CALL generic_cal current_set_value
+// ADD_GRAPHED_CALL generic_cal current_initialize
 static void current_set_value(uint16_t v) {
     idac_set(v);
 }
@@ -264,6 +268,7 @@ const __flash char *CAL_NAMES[] = {
     CAL_NAME_CURRENT,
 };
 
+// ADD_GRAPHED_CALL cal_run CAL_FUNCTION_.*
 const __flash cal_routine_fp CAL_FUNCTIONS[] = {
     &CAL_FUNCTION_VOLTAGE,
     &CAL_FUNCTION_CURRENT,
