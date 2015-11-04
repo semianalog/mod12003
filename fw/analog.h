@@ -29,6 +29,12 @@ static const uint16_t   VOLTAGE_WINDUP_LIMIT_MV     = 32;
 #define VOLTAGE_WINDUP_LIMIT_RAW (VOLTAGE_KI_DENOM * VOLTAGE_WINDUP_LIMIT_MV / VOLTAGE_KI_NUMER)
 
 /**
+ * Softloop integrator cycles to skip after changing the voltage setpoint,
+ * to prevent windup.
+ */
+static const uint8_t    VOLTAGE_LOOP_SKIPS          = 2;
+
+/**
  * Divisor for voltage ADC lowpass. This function is repeated every "fast" cycle:
  * lowpass_adc += (adc - lowpass_adc) / divisor;
  */

@@ -13,7 +13,12 @@ static int32_t          gs_cur_current_avg_numer    = 0;
 static int32_t          gs_voltage_setpoint         = 0;    /// XXX: why int32_t?
 static int32_t          gs_current_setpoint         = 0;    /// XXX: why int32_t?
 static uint16_t         gs_last_voltage             = 0;
-static bool             gs_vset_updated             = false;
+
+// If this is nonzero, the integrator will decrement it and skip a cycle.
+// This should be set to VOLTAGE_LOOP_SKIPS by anything that changes the
+// setpoint.
+static uint8_t          gs_integrator_skip          = 0;
+
 static int32_t          gs_correction_mv            = 0;
 static volatile bool    gs_enabled                  = false;
 
@@ -44,7 +49,7 @@ enum psu_reg_mode psu_get_reg_mode(void)
 void psu_vset(uint16_t mv)
 {
     gs_voltage_setpoint = mv;
-    gs_vset_updated = true;
+    gs_integrator_skip = VOLTAGE_LOOP_SKIPS;
 }
 
 uint16_t psu_get_vsetpt(void)
@@ -145,6 +150,7 @@ static void update_leds(void)
 static void enable_regulator(void)
 {
     gs_correction_mv = 0;
+    gs_integrator_skip = VOLTAGE_LOOP_SKIPS;
     vdac_set(0);
 
     // Force the regulator to saturate low during the edge of
@@ -170,16 +176,21 @@ void psu_slow_cycle(void)
 
     s_last_enabled = gs_enabled;
 
-    if (gs_vset_updated) {
-        // Clear everything out
-        gs_vset_updated = false;
-        s_voltage_error_accum = 0;
-        psu_prereg_vset(gs_voltage_setpoint + REGULATOR_HEADROOM_LIMIT_MV);
+    if (gs_integrator_skip) {
+        --gs_integrator_skip;
+        // XXX: evalute whether we should do this
+        // s_voltage_error_accum = 0;
 
     } else {
 
         gs_last_voltage = psu_vget();
         int32_t error = (int32_t)(gs_last_voltage) - gs_voltage_setpoint;
+
+        // If the single-step error is greater than the windup limit, don't just clamp,
+        // completely discard the sample. This happens at voltage setpoint steps.
+        if (error > VOLTAGE_WINDUP_LIMIT_RAW || error < -VOLTAGE_WINDUP_LIMIT_RAW) {
+            error = 0;
+        }
 
         s_voltage_error_accum += error;
 
@@ -191,9 +202,8 @@ void psu_slow_cycle(void)
 
         gs_correction_mv = VOLTAGE_KI_NUMER * s_voltage_error_accum / VOLTAGE_KI_DENOM;
 
-        psu_prereg_vset(gs_last_voltage + REGULATOR_HEADROOM_LIMIT_MV);
-
     }
+    psu_prereg_vset(gs_voltage_setpoint + REGULATOR_HEADROOM_LIMIT_MV);
     psu_update();
 }
 
