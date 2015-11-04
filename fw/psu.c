@@ -10,8 +10,8 @@
 static const int32_t    ADC_LOWPASS_DENOM           = INT32_C(32768);
 static int32_t          gs_cur_voltage_avg_numer    = 0;
 static int32_t          gs_cur_current_avg_numer    = 0;
-static int32_t          gs_voltage_setpoint         = 0;    /// XXX: why int32_t?
-static int32_t          gs_current_setpoint         = 0;    /// XXX: why int32_t?
+static int16_t          gs_voltage_setpoint         = 0;
+static int16_t          gs_current_setpoint         = 0;
 static uint16_t         gs_last_voltage             = 0;
 
 // If this is nonzero, the integrator will decrement it and skip a cycle.
@@ -64,7 +64,7 @@ uint16_t psu_get_isetpt(void)
 
 void psu_update(void)
 {
-    int32_t mv = gs_voltage_setpoint - gs_correction_mv;
+    int16_t mv = gs_voltage_setpoint - gs_correction_mv;
     uint16_t word = linear(CAL_DATA_VOLTAGE.dacslope, mv, CAL_DATA_VOLTAGE.dacoffset);
     vdac_set(word);
 }
@@ -183,7 +183,7 @@ void psu_slow_cycle(void)
     } else {
 
         gs_last_voltage = psu_vget();
-        int32_t error = (int32_t)(gs_last_voltage) - gs_voltage_setpoint;
+        int16_t error = gs_last_voltage - gs_voltage_setpoint;
 
         // If the single-step error is greater than the windup limit, don't just clamp,
         // completely discard the sample. This happens at voltage setpoint steps.
