@@ -206,6 +206,13 @@ uint16_t psu_prereg_vget(void)
     return (adc_word * VREF_NOMINAL_MV * PREREG_DIV_DENOM) / ((ADC_TOP + 1) * PREREG_DIV_NUMER);
 }
 
+uint16_t psu_temp_get(void)
+{
+    uint16_t adc_word = get_adc_result(ADC_TEMP);
+    uint16_t mv = adc_word / ((ADC_TOP + 1) / VREF_NOMINAL_MV);
+    return linear(TEMP_SLOPE_NUMER, mv, TEMP_SLOPE_OFFSET);
+}
+
 void psu_prereg_vset(uint16_t mv)
 {
     // As before, PWM_TOP + 1 trades a bit of accuracy for efficiency.

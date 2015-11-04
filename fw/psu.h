@@ -86,6 +86,11 @@ void psu_slow_cycle(void);
 uint16_t psu_prereg_vget(void);
 
 /**
+ * Query the temperature of the regulator element, in 0.1degC.
+ */
+uint16_t psu_temp_get(void);
+
+/**
  * Set the voltage of the buck preregulator, in mV, open-loop. Anything
  * greater than the measurable limit (24576 mV) is capped.
  */

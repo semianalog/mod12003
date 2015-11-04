@@ -141,12 +141,26 @@ static void cmd_q_current(void)
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &ua_i32, sizeof(ua_i32));
 }
 
-static void cmd_q_prereg(void)
+static void cmd_dbg_info(void)
 {
-    if (check_datalen(0)) return;
-    uint16_t mv = psu_prereg_vget();
-    uint8_t buffer[2] = {U16_BYTE(mv, 0), U16_BYTE(mv, 1)};
-    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, buffer, 2);
+    char number_buf[6];
+    char out_buf[400];
+
+    size_t i = 0;
+
+    out_buf[0] = 0;
+
+    i = strlcat_P(out_buf, FSTR("Prereg: "), sizeof(out_buf));
+    u16_to_str(number_buf, psu_prereg_vget());
+    i = strlcat(out_buf, number_buf, sizeof(out_buf));
+    i = strlcat_P(out_buf, FSTR(" mV\n"), sizeof(out_buf));
+
+    i = strlcat_P(out_buf, FSTR("Temp: "), sizeof(out_buf));
+    u16_to_str(number_buf, psu_temp_get());
+    i = strlcat(out_buf, number_buf, sizeof(out_buf));
+    i = strlcat_P(out_buf, FSTR(" 0.1degC\n"), sizeof(out_buf));
+
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, out_buf, i);
 }
 
 static void cmd_q_setvolt(void)
@@ -180,7 +194,8 @@ void (* const __flash CMD_HANDLERS[256])() = {
     [CMD_QCURRENT]   = &cmd_q_current,
     [CMD_QSET_VOLT]  = &cmd_q_setvolt,
     [CMD_QSET_CURR]  = &cmd_q_setcurr,
-    [CMD_QPREREG]    = &cmd_q_prereg,
+
+    [CMD_DBG_INFO]   = &cmd_dbg_info,
 
     [CMD_CAL_COUNT]  = &cmd_cal_count,
     [CMD_CAL_SELECT] = &cmd_cal_select,

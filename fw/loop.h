@@ -40,7 +40,8 @@
 #define CMD_QSET_VOLT   0xa1    // return setpoint voltage. LE int32_t millivolts
 #define CMD_QSET_CURR   0xa2    // return setpoint current. LE int32_t microamps
 
-#define CMD_QPREREG     0xe0    // query prereg voltage (for debug)
+#define CMD_DBG_INFO    0xb0    // return a block of debug information. human-readable ASCII,
+                                // up to 20 characters per line and 20 lines, \n newlines
 
 #define CMD_CAL_COUNT   0xf0    // return the number of cal routines, little-endian uint16_t
 #define CMD_CAL_SELECT  0xf1    // in:  LE uint16_t, cal routine ID

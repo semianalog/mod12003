@@ -54,4 +54,10 @@ static const uint16_t   OUTPUT_MAX_MV               = 20500;
 /// Allowed maximum output current (mA)
 static const uint16_t   OUTPUT_MAX_MA               = 3050;
 
+// Temperature sensor is MCP9701, V = T (19.5mV/degC) + 400mV
+/// Temperature sensor conversion (mV->0.1degC) slope
+static const int32_t    TEMP_SLOPE_NUMER            = INT32_C(65536)/1.95;
+/// Temperature sensor conversion (mv->0.1degC) offset
+static const int16_t    TEMP_SLOPE_OFFSET           = -400/1.95;
+
 #endif // _ANALOG_H
