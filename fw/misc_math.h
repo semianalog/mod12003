@@ -3,6 +3,9 @@
 
 #include <inttypes.h>
 
+#define NOINLINE    __attribute__((noinline))
+#define PURE        __attribute__((pure))
+
 static const int64_t    LINEAR_DENOM    = 65536;
 
 /**
@@ -10,7 +13,7 @@ static const int64_t    LINEAR_DENOM    = 65536;
  *
  * Out-of-range results are clamped to 0 and UINT16_MAX.
  */
-uint16_t linear(int32_t m_numer, uint16_t x, int16_t b) __attribute__((noinline));
+uint16_t linear(int32_t m_numer, uint16_t x, int16_t b) NOINLINE PURE;
 
 /**
  * Lightweight u16-to-string routine.

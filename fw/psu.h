@@ -90,6 +90,9 @@ uint16_t psu_prereg_vget(void);
  */
 uint16_t psu_temp_get(void);
 
+/// Query the power dissipation of the regulator element, in 10mW units.
+uint16_t psu_powerdis_get_10mW(void);
+
 /**
  * Set the voltage of the buck preregulator, in mV, open-loop. Anything
  * greater than the measurable limit (24576 mV) is capped.

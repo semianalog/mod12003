@@ -160,6 +160,11 @@ static void cmd_dbg_info(void)
     i = strlcat(out_buf, number_buf, sizeof(out_buf));
     i = strlcat_P(out_buf, FSTR(" 0.1degC\n"), sizeof(out_buf));
 
+    i = strlcat_P(out_buf, FSTR("PDis: "), sizeof(out_buf));
+    u16_to_str(number_buf, psu_powerdis_get_10mW());
+    i = strlcat(out_buf, number_buf, sizeof(out_buf));
+    i = strlcat_P(out_buf, FSTR(" 10mW\n"), sizeof(out_buf));
+
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, out_buf, i);
 }
 

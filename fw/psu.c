@@ -7,6 +7,7 @@
 #include "analog.h"
 #include "misc_math.h"
 
+// XXX: check synchronization of these against ISR access
 static const int32_t    ADC_LOWPASS_DENOM           = INT32_C(32768);
 static int32_t          gs_cur_voltage_avg_numer    = 0;
 static int32_t          gs_cur_current_avg_numer    = 0;
@@ -220,6 +221,19 @@ uint16_t psu_temp_get(void)
     uint16_t adc_word = get_adc_result(ADC_TEMP);
     uint16_t mv = adc_word / ((ADC_TOP + 1) / VREF_NOMINAL_MV);
     return linear(TEMP_SLOPE_NUMER, mv, TEMP_SLOPE_OFFSET);
+}
+
+uint16_t psu_powerdis_get_10mW(void)
+{
+    uint16_t prereg_mv = psu_prereg_vget();
+    uint16_t out_mv = gs_last_voltage;
+    uint16_t out_ma = psu_iget();
+
+    uint16_t vdrop_mv = out_mv - prereg_mv;
+
+    uint32_t power_uW = (uint32_t)(out_ma) * (uint32_t)(vdrop_mv);
+    uint16_t power_10mW = power_uW / UINT32_C(10000);
+    return power_10mW;
 }
 
 void psu_prereg_vset(uint16_t mv)
