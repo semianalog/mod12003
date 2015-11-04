@@ -1,2 +1,6 @@
 afw
 fw.s
+*.su
+*.dot
+*.png
+*.expand
