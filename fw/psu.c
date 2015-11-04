@@ -178,8 +178,7 @@ void psu_slow_cycle(void)
 
     if (gs_integrator_skip) {
         --gs_integrator_skip;
-        // XXX: evalute whether we should do this
-        // s_voltage_error_accum = 0;
+        s_voltage_error_accum = 0;
 
     } else {
 
