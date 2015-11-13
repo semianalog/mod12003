@@ -890,13 +890,10 @@ Wire Notes Line
 	6850 1300 7350 1300
 Wire Notes Line
 	6850 850  6850 1300
-Connection ~ 6450 1550
 Wire Wire Line
 	6450 1900 7000 1900
 Wire Wire Line
 	6450 1550 6650 1550
-Wire Wire Line
-	6450 1100 6450 2000
 Wire Wire Line
 	1100 1100 7000 1100
 Connection ~ 7100 1550
@@ -1744,4 +1741,23 @@ Wire Wire Line
 Connection ~ 5500 4300
 Text Notes -1750 4650 0    50   ~ 0
 FORCE_SAT_L does not exist on the PCB;\nit was added as a wire to the prototype.
+Wire Wire Line
+	6450 1800 6450 2000
+Wire Wire Line
+	6450 1550 6450 1100
+$Comp
+L V+ #PWR?
+U 1 1 56438D50
+P 6450 1800
+F 0 "#PWR?" H 6450 1850 30  0001 C CNN
+F 1 "V+" H 6450 1913 50  0000 C CNN
+F 2 "" H 6450 1800 60  0000 C CNN
+F 3 "" H 6450 1800 60  0000 C CNN
+	1    6450 1800
+	1    0    0    -1  
+$EndComp
+Wire Notes Line
+	5800 1600 6550 1600
+Text Notes 5800 1600 0    50   ~ 0
+Circuit change\nmade in proto
 $EndSCHEMATC
