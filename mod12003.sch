@@ -297,11 +297,11 @@ $Comp
 L SCREW MP2
 U 1 1 55CD1961
 P 750 7650
-F 0 "MP2" H 880 7720 50  0000 L CNN
-F 1 "SCREW" H 880 7620 50  0000 L CNN
+F 0 "MP2" H 880 7670 50  0000 L CNN
+F 1 "SCREW" H 880 7570 50  0000 L CNN
 F 2 "mech:SCREW-4-SUPPORTED" H 750 7650 50  0001 C CNN
 F 3 "" H 750 7650 60  0000 C CNN
-F 4 "NYLON" H 880 7520 50  0000 L CNN "Value2"
+F 4 "~" H 880 7520 50  0000 L CNN "Value2"
 	1    750  7650
 	1    0    0    -1  
 $EndComp
@@ -613,14 +613,14 @@ Text Notes 8000 4250 0    30   ~ 0
 SCREW
 Text Notes 9550 4250 0    30   ~ 0
 SCREW
-Text Notes 9350 5630 0    30   ~ 0
-METAL\nSCREW
+Text Notes 9350 5600 0    30   ~ 0
+SCREW
 Text Notes 8900 4925 0    30   ~ 0
 THERMAL ELASTOMER
 Text Notes 8450 5475 0    30   ~ 0
 THERMAL ELASTOMER
-Text Notes 7950 6950 0    50   ~ 0
-Thermal elastomer pads can be cut from one of:\nt-Global H48-6-21-15-13-1A  (1168-1700-ND)\nt-Global H48-6-25-25-9  (1168-1703-ND)\nor similar compressible materials.\n\nPlace an insulating plastic sheet between the PCB\nand the heat sink, with minimal cutouts for\npassthrough.\n\nTop two screws must be non-conductive.
+Text Notes 7950 6800 0    50   ~ 0
+Thermal elastomer pads can be cut from one of:\nt-Global H48-6-21-15-13-1A  (1168-1700-ND)\nt-Global H48-6-25-25-9  (1168-1703-ND)\nor similar compressible materials.\n\nPlace an insulating plastic sheet between the PCB\nand the heat sink, with minimal cutouts for\npassthrough.
 Wire Wire Line
 	10000 2400 9950 2500
 Wire Wire Line
@@ -1005,7 +1005,7 @@ F 0 "MP3" H 1380 7720 50  0000 L CNN
 F 1 "SCREW" H 1380 7620 50  0000 L CNN
 F 2 "mech:SCREW-4-SUPPORTED" H 1250 7650 50  0001 C CNN
 F 3 "" H 1250 7650 60  0000 C CNN
-F 4 "NYLON" H 1380 7520 50  0000 L CNN "Value2"
+F 4 "~" H 1380 7520 50  0000 L CNN "Value2"
 	1    1250 7650
 	1    0    0    -1  
 $EndComp
