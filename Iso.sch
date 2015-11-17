@@ -89,14 +89,14 @@ EELAYER END
 $Descr USLetter 11000 8500
 encoding utf-8
 Sheet 6 6
-Title "Isolated control interface"
-Date "2015-08-18"
-Rev ""
-Comp ""
-Comment1 ""
+Title "20V, 3A hybrid power supply module"
+Date "2015-11-17"
+Rev "preB"
+Comp "SEMIANALOG"
+Comment1 "MOD12003"
 Comment2 ""
-Comment3 ""
-Comment4 ""
+Comment3 "CC0: https://creativecommons.org/publicdomain/zero/1.0/"
+Comment4 "Source: https://github.com/semianalog/mod12003"
 $EndDescr
 Text HLabel 2150 2600 0    50   Input ~ 0
 ISO_5V

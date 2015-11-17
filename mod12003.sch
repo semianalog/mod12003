@@ -90,13 +90,13 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 6
 Title "20V, 3A hybrid power supply module"
-Date "2015-08-18"
-Rev ""
-Comp ""
-Comment1 ""
+Date "2015-11-17"
+Rev "preB"
+Comp "SEMIANALOG"
+Comment1 "MOD12003"
 Comment2 ""
-Comment3 ""
-Comment4 ""
+Comment3 "CC0: https://creativecommons.org/publicdomain/zero/1.0/"
+Comment4 "Source: https://github.com/semianalog/mod12003"
 $EndDescr
 $Sheet
 S 3600 2200 1200 1100
@@ -505,8 +505,6 @@ Text Notes 900  2250 0    50   ~ 0
 24V
 Text Notes 700  6350 0    50   ~ 0
 LOOP INTERFACE\n\nThe mainboard and all modules must be joined in a loop,\noutput of one connected to the input of the next. The sequence\nwill determine the logical ordering of the modules as seen\nby the user interface.
-Text Notes 6350 7300 0    150  ~ 30
-MOD12003
 $Comp
 L +3.6 #PWR06
 U 1 1 55D42D56

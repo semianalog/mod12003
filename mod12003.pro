@@ -1,4 +1,4 @@
-update=Sun 08 Nov 2015 09:09:39 AM EST
+update=Tue 17 Nov 2015 03:13:48 PM EST
 version=1
 last_client=kicad
 [cvpcb]
@@ -25,16 +25,6 @@ SolderMaskMinWidth=0
 DrawSegmentWidth=0.2
 BoardOutlineThickness=0.09999999999999999
 ModuleOutlineThickness=0.15
-[schematic_editor]
-version=1
-PageLayoutDescrFile=basic.kicad_wks
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=Pcbnew
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=50
 [eeschema]
 version=1
 LibDir=../../sch/library
@@ -123,3 +113,13 @@ LibName81=Atmel
 LibName82=AnalogDevices
 LibName83=Altera
 LibName84=AOS
+[schematic_editor]
+version=1
+PageLayoutDescrFile=semianalog_cc0.kicad_wks
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=Pcbnew
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=50
