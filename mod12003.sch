@@ -297,11 +297,10 @@ $Comp
 L SCREW MP2
 U 1 1 55CD1961
 P 750 7650
-F 0 "MP2" H 880 7720 50  0000 L CNN
-F 1 "SCREW" H 880 7620 50  0000 L CNN
+F 0 "MP2" H 880 7670 50  0000 L CNN
+F 1 "SCREW" H 880 7570 50  0000 L CNN
 F 2 "mech:SCREW-4-SUPPORTED" H 750 7650 50  0001 C CNN
 F 3 "" H 750 7650 60  0000 C CNN
-F 4 "NYLON" H 880 7520 50  0000 L CNN "Value2"
 	1    750  7650
 	1    0    0    -1  
 $EndComp
@@ -503,7 +502,7 @@ F 5 "Value" H 8650 3050 60  0001 C CNN "Manuf"
 $EndComp
 Text Notes 900  2250 0    50   ~ 0
 24V
-Text Notes 700  6350 0    50   ~ 0
+Text Notes 700  6150 0    50   ~ 0
 LOOP INTERFACE\n\nThe mainboard and all modules must be joined in a loop,\noutput of one connected to the input of the next. The sequence\nwill determine the logical ordering of the modules as seen\nby the user interface.
 $Comp
 L +3.6 #PWR06
@@ -597,7 +596,7 @@ F 4 "(2) PIN STRIP 100mil; JUMPER 100mil" H 2700 5200 60  0001 C CNN "BOM"
 	1    2700 5200
 	1    0    0    1   
 $EndComp
-Text Notes 700  6500 0    50   ~ 0
+Text Notes 700  6300 0    50   ~ 0
 Mating connector: A30980-ND
 Text Notes 7950 4050 0    50   ~ 10
 MOUNTING/HEAT SINKING:
@@ -611,14 +610,12 @@ Text Notes 8000 4250 0    30   ~ 0
 SCREW
 Text Notes 9550 4250 0    30   ~ 0
 SCREW
-Text Notes 9350 5630 0    30   ~ 0
-METAL\nSCREW
 Text Notes 8900 4925 0    30   ~ 0
 THERMAL ELASTOMER
 Text Notes 8450 5475 0    30   ~ 0
 THERMAL ELASTOMER
-Text Notes 7950 6950 0    50   ~ 0
-Thermal elastomer pads can be cut from one of:\nt-Global H48-6-21-15-13-1A  (1168-1700-ND)\nt-Global H48-6-25-25-9  (1168-1703-ND)\nor similar compressible materials.\n\nPlace an insulating plastic sheet between the PCB\nand the heat sink, with minimal cutouts for\npassthrough.\n\nTop two screws must be non-conductive.
+Text Notes 7950 6400 0    50   ~ 0
+Thermal elastomer pads can be cut from one of:\nt-Global H48-6-21-15-13-1A  (1168-1700-ND)\nt-Global H48-6-25-25-9  (1168-1703-ND)\nor similar compressible materials.
 Wire Wire Line
 	10000 2400 9950 2500
 Wire Wire Line
@@ -1003,7 +1000,6 @@ F 0 "MP3" H 1380 7720 50  0000 L CNN
 F 1 "SCREW" H 1380 7620 50  0000 L CNN
 F 2 "mech:SCREW-4-SUPPORTED" H 1250 7650 50  0001 C CNN
 F 3 "" H 1250 7650 60  0000 C CNN
-F 4 "NYLON" H 1380 7520 50  0000 L CNN "Value2"
 	1    1250 7650
 	1    0    0    -1  
 $EndComp
@@ -1165,4 +1161,6 @@ Text Notes 3150 6750 0    50   ~ 0
 Additional parts:\nJ1, J2 mating connector: A30980-ND\nElastomer: 1168-1700-ND\nHeatsink insulator: 926-1489-ND
 Wire Wire Line
 	4200 4400 5400 4400
+Text Notes 9350 5600 0    30   ~ 0
+SCREW
 $EndSCHEMATC
