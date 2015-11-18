@@ -147,16 +147,9 @@ static void send_checksum(void) {
     buffer_send(READ_U16_BYTE(crc, 0), false);
 }
 
-void send_msg(uint8_t addr, uint8_t cmd, const volatile void *data, uint16_t datalen)
+void send_msg(uint8_t addr, uint8_t cmd, const volatile __memx void *data, uint16_t datalen)
 {
-    send_msg_header(addr, cmd, datalen);
-    buffer_send_bytes((const uint8_t *) data, datalen, true);
-    send_checksum();
-}
-
-void send_msg_F(uint8_t addr, uint8_t cmd, const __flash void *data, uint16_t datalen)
-{
-    const __flash uint8_t *data_u8 = data;
+    const volatile __memx uint8_t *data_u8 = data;
 
     send_msg_header(addr, cmd, datalen);
     for (size_t i = 0; i < datalen; ++i) {

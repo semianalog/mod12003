@@ -39,7 +39,7 @@ static void cmd_nop()
 
 static void cmd_idn()
 {
-    send_msg_F(LOOP_ADDR_RESPONSE, CMD_ACK, FSTR(IDN_STR), sizeof(IDN_STR) - 1);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, FSTR(IDN_STR), sizeof(IDN_STR) - 1);
 }
 
 static void cmd_serial()

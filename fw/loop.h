@@ -105,9 +105,7 @@ extern volatile struct loop_msg g_loop_msg;
  * @param data - Block of data to send. Can be NULL iff datalen == 0
  * @param datalen - Length of data to send
  */
-void send_msg(uint8_t addr, uint8_t cmd, const volatile void *data, uint16_t datalen);
-
-void send_msg_F(uint8_t addr, uint8_t cmd, const __flash void *data, uint16_t datalen);
+void send_msg(uint8_t addr, uint8_t cmd, const volatile __memx void *data, uint16_t datalen);
 
 /// Shortcut to send an empty ACK message.
 void send_ack(void);

@@ -31,7 +31,7 @@ void cmd_cal_name(void)
     if (check_datalen(0)) return;
     const char __flash * name = CAL_NAMES[g_selected_cal];
     size_t len = strlen_P(name);
-    send_msg_F(LOOP_ADDR_RESPONSE, CMD_ACK, name, len);
+    send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, name, len);
 }
 
 void cmd_cal_status(void)
