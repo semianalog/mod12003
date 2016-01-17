@@ -193,12 +193,9 @@ static void disable_regulator(void)
     psu_prereg_vset(0);
 }
 
-void psu_slow_cycle(void)
+static void enable_or_disable(void)
 {
-    static int32_t s_voltage_error_accum = 0;
     static bool s_last_enabled = false;
-
-    update_leds();
 
     if (gs_enabled && !s_last_enabled) {
         enable_regulator();
@@ -207,6 +204,14 @@ void psu_slow_cycle(void)
     }
 
     s_last_enabled = gs_enabled;
+}
+
+void psu_slow_cycle(void)
+{
+    static int32_t s_voltage_error_accum = 0;
+
+    update_leds();
+    enable_or_disable();
 
     if (!gs_enabled) {
         return;
