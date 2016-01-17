@@ -1,6 +1,6 @@
-update=Tue 17 Nov 2015 03:13:48 PM EST
+update=Sun 17 Jan 2016 12:51:27 PM EST
 version=1
-last_client=kicad
+last_client=eeschema
 [cvpcb]
 version=1
 NetIExt=net
@@ -113,6 +113,8 @@ LibName81=Atmel
 LibName82=AnalogDevices
 LibName83=Altera
 LibName84=AOS
+LibName85=pasv-Murata
+LibName86=pasv-TDK
 [schematic_editor]
 version=1
 PageLayoutDescrFile=semianalog_cc0.kicad_wks
@@ -123,3 +125,4 @@ NetFmtName=Pcbnew
 SpiceForceRefPrefix=0
 SpiceUseNetNumbers=0
 LabSize=50
+ERC_TestSimilarLabels=1

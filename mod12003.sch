@@ -83,6 +83,8 @@ LIBS:Atmel
 LIBS:AnalogDevices
 LIBS:Altera
 LIBS:AOS
+LIBS:pasv-Murata
+LIBS:pasv-TDK
 LIBS:mod12003-cache
 EELAYER 25 0
 EELAYER END
