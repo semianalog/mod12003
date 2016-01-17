@@ -190,6 +190,7 @@ static void enable_regulator(void)
 static void disable_regulator(void)
 {
     PCLR(P_LINREG_EN);
+    psu_prereg_vset(0);
 }
 
 void psu_slow_cycle(void)
