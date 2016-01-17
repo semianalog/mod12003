@@ -128,6 +128,10 @@ static void lowpass_adc(uint8_t channel, int32_t *numer)
 
 void psu_fast_cycle(void)
 {
+    if (!gs_enabled) {
+        return;
+    }
+
     lowpass_adc(ADC_VSENSE, &gs_cur_voltage_avg_numer);
     lowpass_adc(ADC_ISENSE, &gs_cur_current_avg_numer);
 
@@ -137,6 +141,8 @@ void psu_fast_cycle(void)
 
     if (prereg < postreg || prereg_margin < REGULATOR_HEADROOM_LIMIT_MV) {
         psu_prereg_vset(gs_last_voltage + REGULATOR_HEADROOM_LIMIT_MV);
+    } else {
+        psu_prereg_vset(gs_voltage_setpoint + REGULATOR_HEADROOM_LIMIT_MV);
     }
 }
 
@@ -231,7 +237,7 @@ void psu_slow_cycle(void)
         gs_correction_mv = VOLTAGE_KI_NUMER * s_voltage_error_accum / VOLTAGE_KI_DENOM;
 
     }
-    psu_prereg_vset(gs_voltage_setpoint + REGULATOR_HEADROOM_LIMIT_MV);
+
     psu_update();
 }
 
