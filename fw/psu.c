@@ -15,11 +15,6 @@ static int16_t          gs_voltage_setpoint         = 0;
 static int16_t          gs_current_setpoint         = 0;
 static uint16_t         gs_last_voltage             = 0;
 
-// If this is nonzero, the integrator will decrement it and skip a cycle.
-// This should be set to VOLTAGE_LOOP_SKIPS by anything that changes the
-// setpoint.
-static uint8_t          gs_integrator_skip          = 0;
-
 static int32_t          gs_correction_mv            = 0;
 static volatile bool    gs_enabled                  = false;
 
@@ -62,7 +57,6 @@ void psu_vset(uint16_t mv)
 {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         gs_voltage_setpoint = mv;
-        gs_integrator_skip = VOLTAGE_LOOP_SKIPS;
     }
 }
 
@@ -174,7 +168,6 @@ static void update_leds(void)
 static void enable_regulator(void)
 {
     gs_correction_mv = 0;
-    gs_integrator_skip = VOLTAGE_LOOP_SKIPS;
     vdac_set(0);
 
     // Force the regulator to saturate low during the edge of
@@ -210,32 +203,24 @@ static void voltage_integrator_cycle(void)
 {
     static int32_t s_voltage_error_accum = 0;
 
-    if (gs_integrator_skip) {
-        --gs_integrator_skip;
-        s_voltage_error_accum = 0;
+    gs_last_voltage = psu_vget();
+    int16_t error = gs_last_voltage - gs_voltage_setpoint;
 
-    } else {
-
-        gs_last_voltage = psu_vget();
-        int16_t error = gs_last_voltage - gs_voltage_setpoint;
-
-        // If the single-step error is greater than the windup limit, don't just clamp,
-        // completely discard the sample. This happens at voltage setpoint steps.
-        if (error > VOLTAGE_WINDUP_LIMIT_RAW || error < -VOLTAGE_WINDUP_LIMIT_RAW) {
-            error = 0;
-        }
-
-        s_voltage_error_accum += error;
-
-        if (s_voltage_error_accum > VOLTAGE_WINDUP_LIMIT_RAW) {
-            s_voltage_error_accum = VOLTAGE_WINDUP_LIMIT_RAW;
-        } else if (s_voltage_error_accum < -VOLTAGE_WINDUP_LIMIT_RAW) {
-            s_voltage_error_accum = -VOLTAGE_WINDUP_LIMIT_RAW;
-        }
-
-        gs_correction_mv = VOLTAGE_KI_NUMER * s_voltage_error_accum / VOLTAGE_KI_DENOM;
-
+    // If the single-step error is greater than the windup limit, don't just clamp,
+    // completely discard the sample. This happens at voltage setpoint steps.
+    if (error > VOLTAGE_WINDUP_LIMIT_RAW || error < -VOLTAGE_WINDUP_LIMIT_RAW) {
+        error = 0;
     }
+
+    s_voltage_error_accum += error;
+
+    if (s_voltage_error_accum > VOLTAGE_WINDUP_LIMIT_RAW) {
+        s_voltage_error_accum = VOLTAGE_WINDUP_LIMIT_RAW;
+    } else if (s_voltage_error_accum < -VOLTAGE_WINDUP_LIMIT_RAW) {
+        s_voltage_error_accum = -VOLTAGE_WINDUP_LIMIT_RAW;
+    }
+
+    gs_correction_mv = VOLTAGE_KI_NUMER * s_voltage_error_accum / VOLTAGE_KI_DENOM;
 }
 
 void psu_slow_cycle(void)
