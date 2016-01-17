@@ -159,7 +159,6 @@ static void update_leds(void)
             PSET(P_LEDCV);
         }
     } else {
-        PCLR(P_LINREG_EN);
         PCLR(P_LEDCC);
         PCLR(P_LEDCV);
         return;
@@ -182,6 +181,11 @@ static void enable_regulator(void)
     PCLR(P_LINREG_SAT);
 }
 
+static void disable_regulator(void)
+{
+    PCLR(P_LINREG_EN);
+}
+
 void psu_slow_cycle(void)
 {
     static int32_t s_voltage_error_accum = 0;
@@ -194,6 +198,11 @@ void psu_slow_cycle(void)
     }
 
     s_last_enabled = gs_enabled;
+
+    if (!gs_enabled) {
+        disable_regulator();
+        return;
+    }
 
     if (gs_integrator_skip) {
         --gs_integrator_skip;
