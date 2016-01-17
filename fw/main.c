@@ -29,6 +29,7 @@ int main(void)
     idac_init();
 
     timers_init();
+    timer_pwmset_prereg(0);
     timer_pwmset_ovpth(255);
 
     loop_init();

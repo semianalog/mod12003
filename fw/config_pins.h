@@ -11,7 +11,7 @@ X(A,    7,  P_TEMP,         D_IN,   0,      0)
 
 X(C,    0,  PC0,            D_IN,   0,      0)
 X(C,    1,  P_OVPTH_PWM,    D_OUT,  1,      0)
-X(C,    2,  P_PREREG_SW,    D_OUT,  1,      0)
+X(C,    2,  P_PREREG_SW,    D_OUT,  0,      0)
 X(C,    3,  P_SCR_TRIP,     D_IN,   0,      PORT_INVEN_bm)
 X(C,    4,  P_ILIM,         D_IN,   0,      PORT_INVEN_bm)
 X(C,    5,  P_VLIM,         D_IN,   0,      PORT_INVEN_bm)
