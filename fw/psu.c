@@ -248,7 +248,15 @@ uint16_t psu_powerdis_get_10mW(void)
     uint16_t out_ma = psu_iget();
     uint16_t out_mv = ATOMIC_ACCESS(gs_last_voltage);
 
-    uint16_t vdrop_mv = out_mv - prereg_mv;
+    if (prereg_mv < out_mv)
+    {
+        // Output is being forced externally. Report maximum power, as there
+        // is no other sensible answer here - we cannot know where the
+        // current is flowing
+        return 0xffffu;
+    }
+
+    uint16_t vdrop_mv = prereg_mv - out_mv;
 
     uint32_t power_uW = (uint32_t)(out_ma) * (uint32_t)(vdrop_mv);
     uint16_t power_10mW = power_uW / UINT32_C(10000);
