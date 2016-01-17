@@ -206,16 +206,9 @@ static void enable_or_disable(void)
     s_last_enabled = gs_enabled;
 }
 
-void psu_slow_cycle(void)
+static void voltage_integrator_cycle(void)
 {
     static int32_t s_voltage_error_accum = 0;
-
-    update_leds();
-    enable_or_disable();
-
-    if (!gs_enabled) {
-        return;
-    }
 
     if (gs_integrator_skip) {
         --gs_integrator_skip;
@@ -243,8 +236,18 @@ void psu_slow_cycle(void)
         gs_correction_mv = VOLTAGE_KI_NUMER * s_voltage_error_accum / VOLTAGE_KI_DENOM;
 
     }
+}
 
-    psu_update();
+void psu_slow_cycle(void)
+{
+
+    update_leds();
+    enable_or_disable();
+
+    if (gs_enabled) {
+        voltage_integrator_cycle();
+        psu_update();
+    }
 }
 
 uint16_t psu_prereg_vget(void)
