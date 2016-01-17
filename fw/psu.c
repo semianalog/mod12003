@@ -195,12 +195,13 @@ void psu_slow_cycle(void)
 
     if (gs_enabled && !s_last_enabled) {
         enable_regulator();
+    } else if (!gs_enabled && s_last_enabled) {
+        disable_regulator();
     }
 
     s_last_enabled = gs_enabled;
 
     if (!gs_enabled) {
-        disable_regulator();
         return;
     }
 
