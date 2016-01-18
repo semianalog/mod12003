@@ -30,32 +30,10 @@ enum psu_reg_mode {
  */
 enum psu_reg_mode psu_get_reg_mode(void);
 
-/**
- * Set the output voltage. Does not enable the regulator.
- *
- * @param mv output voltage, in millivolts
- */
+/// Set the output voltage in mV, without enabling the supply.
 void psu_vset(uint16_t mv);
 
-/**
- * Get the output voltage.
- *
- * @return output voltage in mV
- */
-uint16_t psu_vget(void);
-
-/**
- * Get the output current.
- *
- * @return output current in mA
- */
-uint16_t psu_iget(void);
-
-/**
- * Set the output current. Does not enable the regulator.
- *
- * @param ma output current, in milliamps
- */
+/// Set the output current in mA, without enabling the supply.
 void psu_iset(uint16_t ma);
 
 /// Get the voltage setpoint in mV
@@ -63,6 +41,9 @@ uint16_t psu_get_vsetpt(void);
 
 /// Get the current setpoint in mA
 uint16_t psu_get_isetpt(void);
+
+/// Set the preregulator voltage in mV (open-loop).
+void psu_prereg_vset(uint16_t mv);
 
 /**
  * Runs the fast cycle. This should be called every time a full ADC scan has
@@ -74,24 +55,5 @@ void psu_fast_cycle(void);
  * Runs the slow cycle. This should be called every slow system tick (about 250ms)
  */
 void psu_slow_cycle(void);
-
-/**
- * Query the voltage of the buck preregulator, in mV.
- */
-uint16_t psu_prereg_vget(void);
-
-/**
- * Query the temperature of the regulator element, in 0.1degC.
- */
-uint16_t psu_temp_get(void);
-
-/// Query the power dissipation of the regulator element, in 10mW units.
-uint16_t psu_powerdis_get_10mW(void);
-
-/**
- * Set the voltage of the buck preregulator, in mV, open-loop. Anything
- * greater than the measurable limit (24576 mV) is capped.
- */
-void psu_prereg_vset(uint16_t mv);
 
 #endif // _PSU_H

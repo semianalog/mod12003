@@ -11,6 +11,7 @@
 
 #include "cal.h"
 #include "psu.h"
+#include "measure.h"
 
 void send_ack(void)
 {
@@ -128,7 +129,7 @@ static void cmd_q_output(void)
 static void cmd_q_voltage(void)
 {
     if (check_datalen(0)) return;
-    uint16_t mv = psu_vget();
+    uint16_t mv = measured_voltage();
     int32_t mv_i32 = (uint32_t) mv;
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &mv_i32, sizeof(mv_i32));
 }
@@ -136,7 +137,7 @@ static void cmd_q_voltage(void)
 static void cmd_q_current(void)
 {
     if (check_datalen(0)) return;
-    uint16_t ma = psu_iget();
+    uint16_t ma = measured_current();
     int32_t ua_i32 = (uint32_t) ma * 1000;
     send_msg(LOOP_ADDR_RESPONSE, CMD_ACK, &ua_i32, sizeof(ua_i32));
 }
@@ -151,17 +152,17 @@ static void cmd_dbg_info(void)
     out_buf[0] = 0;
 
     i = strlcat_P(out_buf, FSTR("Prereg: "), sizeof(out_buf));
-    u16_to_str(number_buf, psu_prereg_vget());
+    u16_to_str(number_buf, measured_prereg());
     i = strlcat(out_buf, number_buf, sizeof(out_buf));
     i = strlcat_P(out_buf, FSTR(" mV\n"), sizeof(out_buf));
 
     i = strlcat_P(out_buf, FSTR("Temp: "), sizeof(out_buf));
-    u16_to_str(number_buf, psu_temp_get());
+    u16_to_str(number_buf, measured_temperature());
     i = strlcat(out_buf, number_buf, sizeof(out_buf));
     i = strlcat_P(out_buf, FSTR(" 0.1degC\n"), sizeof(out_buf));
 
     i = strlcat_P(out_buf, FSTR("PDis: "), sizeof(out_buf));
-    u16_to_str(number_buf, psu_powerdis_get_10mW());
+    u16_to_str(number_buf, measured_power_dissipation());
     i = strlcat(out_buf, number_buf, sizeof(out_buf));
     i = strlcat_P(out_buf, FSTR(" 10mW\n"), sizeof(out_buf));
 
