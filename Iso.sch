@@ -1,90 +1,85 @@
 EESchema Schematic File Version 2
-LIBS:Xilinx
-LIBS:Vishay
-LIBS:TexasInstruments
-LIBS:symbol
-LIBS:supertex
-LIBS:st_ic
-LIBS:ST
-LIBS:skyworks
-LIBS:silabs
-LIBS:semi-trans-Vishay
-LIBS:semi-trans-Toshiba
-LIBS:semi-trans-TIP
-LIBS:semi-trans-TI
-LIBS:semi-trans-ST
-LIBS:semi-trans-PZT
-LIBS:semi-trans-OnSemi
-LIBS:semi-trans-NXP
-LIBS:semi-trans-MPS
-LIBS:semi-trans-MMB
-LIBS:semi-trans-misc
-LIBS:semi-trans-IXYS
-LIBS:semi-trans-IntRect
-LIBS:semi-trans-Infineon
-LIBS:semi-trans-Fairchild
-LIBS:semi-trans-EPC
-LIBS:semi-trans-DiodesInc
-LIBS:semi-trans-BC
-LIBS:semi-trans-AOS
-LIBS:semi-trans-2N
-LIBS:semi-thyristor-2N
-LIBS:semi-opto-misc
-LIBS:semi-diode-Vishay
-LIBS:semi-diode-ST
-LIBS:semi-diode-OnSemi
-LIBS:semi-diode-NXP
-LIBS:semi-diode-Murata
-LIBS:semi-diode-MMB
-LIBS:semi-diode-MCC
-LIBS:semi-diode-DiodesInc
-LIBS:semi-diode-BA
-LIBS:semi-diode-1N
-LIBS:_semi
-LIBS:Recom
-LIBS:power
-LIBS:pcb
-LIBS:pasv-xtal
-LIBS:pasv-res
-LIBS:pasv-ind
-LIBS:pasv-cap
-LIBS:pasv-Bourns
-LIBS:pasv-BiTech
-LIBS:passive
-LIBS:onsemi
-LIBS:NXP
-LIBS:Micron
-LIBS:Microchip
-LIBS:mechanical
-LIBS:maxim
-LIBS:MACOM
-LIBS:logic-7400
-LIBS:logic-4000
-LIBS:Littelfuse
-LIBS:LinearTech
-LIBS:_linear
-LIBS:Lattice
-LIBS:Intersil
-LIBS:FTDI
-LIBS:Fairchild
-LIBS:_electromech
-LIBS:display
-LIBS:DiodesInc
-LIBS:conn-test
-LIBS:conn-te
-LIBS:conn-tagconnect
-LIBS:conn-molex
-LIBS:conn-linx
-LIBS:conn-fci
-LIBS:conn-cui
-LIBS:conn-100mil
-LIBS:conn-2mm
-LIBS:Atmel
-LIBS:AnalogDevices
 LIBS:Altera
+LIBS:AnalogDevices
 LIBS:AOS
+LIBS:Atmel
+LIBS:conn-2mm
+LIBS:conn-100mil
+LIBS:conn-amphenol
+LIBS:conn-cui
+LIBS:conn-fci
+LIBS:conn-jae
+LIBS:conn-linx
+LIBS:conn-molex
+LIBS:conn-tagconnect
+LIBS:conn-te
+LIBS:conn-test
+LIBS:DiodesInc
+LIBS:display
+LIBS:electomech-misc
+LIBS:_electromech
+LIBS:Fairchild
+LIBS:FTDI
+LIBS:Intersil
+LIBS:Lattice
+LIBS:_linear
+LIBS:LinearTech
+LIBS:Littelfuse
+LIBS:logic-4000
+LIBS:logic-7400
+LIBS:MACOM
+LIBS:maxim
+LIBS:mechanical
+LIBS:Microchip
+LIBS:Micron
+LIBS:NXP
+LIBS:onsemi
+LIBS:passive
+LIBS:pasv-BiTech
+LIBS:pasv-Bourns
+LIBS:pasv-cap
+LIBS:pasv-ind
 LIBS:pasv-Murata
+LIBS:pasv-res
 LIBS:pasv-TDK
+LIBS:pasv-xtal
+LIBS:pcb
+LIBS:power
+LIBS:Recom
+LIBS:_semi
+LIBS:semi-diode-DiodesInc
+LIBS:semi-diode-generic
+LIBS:semi-diode-MCC
+LIBS:semi-diode-NXP
+LIBS:semi-diode-OnSemi
+LIBS:semi-diode-ST
+LIBS:semi-diode-Toshiba
+LIBS:semi-opto-generic
+LIBS:semi-opto-liteon
+LIBS:semi-thyristor-generic
+LIBS:semi-trans-AOS
+LIBS:semi-trans-DiodesInc
+LIBS:semi-trans-EPC
+LIBS:semi-trans-Fairchild
+LIBS:semi-trans-generic
+LIBS:semi-trans-Infineon
+LIBS:semi-trans-IRF
+LIBS:semi-trans-IXYS
+LIBS:semi-trans-NXP
+LIBS:semi-trans-OnSemi
+LIBS:semi-trans-ST
+LIBS:semi-trans-TI
+LIBS:semi-trans-Toshiba
+LIBS:semi-trans-Vishay
+LIBS:silabs
+LIBS:skyworks
+LIBS:ST
+LIBS:st_ic
+LIBS:supertex
+LIBS:symbol
+LIBS:TexasInstruments
+LIBS:Vishay
+LIBS:Xilinx
 LIBS:mod12003-cache
 EELAYER 25 0
 EELAYER END
@@ -130,10 +125,10 @@ F 5 "Value" H 8200 4600 60  0001 C CNN "Manuf"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR098
+L GND #PWR74
 U 1 1 55D17F73
 P 8200 4750
-F 0 "#PWR098" H 8200 4750 30  0001 C CNN
+F 0 "#PWR74" H 8200 4750 30  0001 C CNN
 F 1 "GND" H 8200 4680 30  0001 C CNN
 F 2 "" H 8200 4750 60  0000 C CNN
 F 3 "" H 8200 4750 60  0000 C CNN
@@ -159,10 +154,10 @@ Wire Wire Line
 Wire Wire Line
 	3900 3100 6000 3100
 $Comp
-L +3.3 #PWR099
+L +3.3 #PWR73
 U 1 1 55D5749C
 P 8200 4500
-F 0 "#PWR099" H 8200 4550 30  0001 C CNN
+F 0 "#PWR73" H 8200 4550 30  0001 C CNN
 F 1 "+3.3" H 8200 4613 50  0000 C CNN
 F 2 "" H 8200 4500 60  0000 C CNN
 F 3 "" H 8200 4500 60  0000 C CNN
@@ -190,10 +185,10 @@ Wire Wire Line
 Wire Wire Line
 	6200 3900 6200 4900
 $Comp
-L +3.3 #PWR0100
+L +3.3 #PWR63
 U 1 1 55D575AD
 P 7450 3500
-F 0 "#PWR0100" H 7450 3550 30  0001 C CNN
+F 0 "#PWR63" H 7450 3550 30  0001 C CNN
 F 1 "+3.3" H 7450 3613 50  0000 C CNN
 F 2 "" H 7450 3500 60  0000 C CNN
 F 3 "" H 7450 3500 60  0000 C CNN
@@ -205,10 +200,10 @@ Wire Wire Line
 Wire Wire Line
 	7450 3600 7450 3500
 $Comp
-L GND #PWR0101
+L GND #PWR64
 U 1 1 55D57601
 P 7450 4000
-F 0 "#PWR0101" H 7450 4000 30  0001 C CNN
+F 0 "#PWR64" H 7450 4000 30  0001 C CNN
 F 1 "GND" H 7450 3930 30  0001 C CNN
 F 2 "" H 7450 4000 60  0000 C CNN
 F 3 "" H 7450 4000 60  0000 C CNN

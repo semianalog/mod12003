@@ -1,90 +1,85 @@
 EESchema Schematic File Version 2
-LIBS:Xilinx
-LIBS:Vishay
-LIBS:TexasInstruments
-LIBS:symbol
-LIBS:supertex
-LIBS:st_ic
-LIBS:ST
-LIBS:skyworks
-LIBS:silabs
-LIBS:semi-trans-Vishay
-LIBS:semi-trans-Toshiba
-LIBS:semi-trans-TIP
-LIBS:semi-trans-TI
-LIBS:semi-trans-ST
-LIBS:semi-trans-PZT
-LIBS:semi-trans-OnSemi
-LIBS:semi-trans-NXP
-LIBS:semi-trans-MPS
-LIBS:semi-trans-MMB
-LIBS:semi-trans-misc
-LIBS:semi-trans-IXYS
-LIBS:semi-trans-IntRect
-LIBS:semi-trans-Infineon
-LIBS:semi-trans-Fairchild
-LIBS:semi-trans-EPC
-LIBS:semi-trans-DiodesInc
-LIBS:semi-trans-BC
-LIBS:semi-trans-AOS
-LIBS:semi-trans-2N
-LIBS:semi-thyristor-2N
-LIBS:semi-opto-misc
-LIBS:semi-diode-Vishay
-LIBS:semi-diode-ST
-LIBS:semi-diode-OnSemi
-LIBS:semi-diode-NXP
-LIBS:semi-diode-Murata
-LIBS:semi-diode-MMB
-LIBS:semi-diode-MCC
-LIBS:semi-diode-DiodesInc
-LIBS:semi-diode-BA
-LIBS:semi-diode-1N
-LIBS:_semi
-LIBS:Recom
-LIBS:power
-LIBS:pcb
-LIBS:pasv-xtal
-LIBS:pasv-res
-LIBS:pasv-ind
-LIBS:pasv-cap
-LIBS:pasv-Bourns
-LIBS:pasv-BiTech
-LIBS:passive
-LIBS:onsemi
-LIBS:NXP
-LIBS:Micron
-LIBS:Microchip
-LIBS:mechanical
-LIBS:maxim
-LIBS:MACOM
-LIBS:logic-7400
-LIBS:logic-4000
-LIBS:Littelfuse
-LIBS:LinearTech
-LIBS:_linear
-LIBS:Lattice
-LIBS:Intersil
-LIBS:FTDI
-LIBS:Fairchild
-LIBS:_electromech
-LIBS:display
-LIBS:DiodesInc
-LIBS:conn-test
-LIBS:conn-te
-LIBS:conn-tagconnect
-LIBS:conn-molex
-LIBS:conn-linx
-LIBS:conn-fci
-LIBS:conn-cui
-LIBS:conn-100mil
-LIBS:conn-2mm
-LIBS:Atmel
-LIBS:AnalogDevices
 LIBS:Altera
+LIBS:AnalogDevices
 LIBS:AOS
+LIBS:Atmel
+LIBS:conn-2mm
+LIBS:conn-100mil
+LIBS:conn-amphenol
+LIBS:conn-cui
+LIBS:conn-fci
+LIBS:conn-jae
+LIBS:conn-linx
+LIBS:conn-molex
+LIBS:conn-tagconnect
+LIBS:conn-te
+LIBS:conn-test
+LIBS:DiodesInc
+LIBS:display
+LIBS:electomech-misc
+LIBS:_electromech
+LIBS:Fairchild
+LIBS:FTDI
+LIBS:Intersil
+LIBS:Lattice
+LIBS:_linear
+LIBS:LinearTech
+LIBS:Littelfuse
+LIBS:logic-4000
+LIBS:logic-7400
+LIBS:MACOM
+LIBS:maxim
+LIBS:mechanical
+LIBS:Microchip
+LIBS:Micron
+LIBS:NXP
+LIBS:onsemi
+LIBS:passive
+LIBS:pasv-BiTech
+LIBS:pasv-Bourns
+LIBS:pasv-cap
+LIBS:pasv-ind
 LIBS:pasv-Murata
+LIBS:pasv-res
 LIBS:pasv-TDK
+LIBS:pasv-xtal
+LIBS:pcb
+LIBS:power
+LIBS:Recom
+LIBS:_semi
+LIBS:semi-diode-DiodesInc
+LIBS:semi-diode-generic
+LIBS:semi-diode-MCC
+LIBS:semi-diode-NXP
+LIBS:semi-diode-OnSemi
+LIBS:semi-diode-ST
+LIBS:semi-diode-Toshiba
+LIBS:semi-opto-generic
+LIBS:semi-opto-liteon
+LIBS:semi-thyristor-generic
+LIBS:semi-trans-AOS
+LIBS:semi-trans-DiodesInc
+LIBS:semi-trans-EPC
+LIBS:semi-trans-Fairchild
+LIBS:semi-trans-generic
+LIBS:semi-trans-Infineon
+LIBS:semi-trans-IRF
+LIBS:semi-trans-IXYS
+LIBS:semi-trans-NXP
+LIBS:semi-trans-OnSemi
+LIBS:semi-trans-ST
+LIBS:semi-trans-TI
+LIBS:semi-trans-Toshiba
+LIBS:semi-trans-Vishay
+LIBS:silabs
+LIBS:skyworks
+LIBS:ST
+LIBS:st_ic
+LIBS:supertex
+LIBS:symbol
+LIBS:TexasInstruments
+LIBS:Vishay
+LIBS:Xilinx
 LIBS:mod12003-cache
 EELAYER 25 0
 EELAYER END
@@ -253,7 +248,7 @@ F 4 "DIST DIGIKEY 493-1868-ND" H 1600 3100 60  0001 C CNN "BOM"
 $EndComp
 $Comp
 L AO4805 Q7
-U 1 1 55D02C23
+U 1 2 55D02C23
 P 5250 3750
 F 0 "Q7" H 5100 3950 50  0000 L CNN
 F 1 "AO4805" H 5422 3700 50  0001 L CNN
@@ -265,7 +260,7 @@ F 4 "PMOS AOS AO4805" H 6050 4300 60  0001 C CNN "BOM"
 $EndComp
 $Comp
 L AO4805 Q7
-U 2 1 55D02CC6
+U 2 2 55D02CC6
 P 5500 3750
 F 0 "Q7" H 5672 3800 50  0000 L CNN
 F 1 "AO4805" H 5672 3700 50  0000 L CNN
@@ -291,10 +286,10 @@ F 5 "CAP MLCC 100n ≥X5R 35V 10% [0603]" H 6250 3650 60  0001 C CNN "BOM"
 	-1   0    0    1   
 $EndComp
 $Comp
-L GND #PWR011
+L GND #PWR28
 U 1 1 55D3BB43
 P 4100 5350
-F 0 "#PWR011" H 4100 5350 30  0001 C CNN
+F 0 "#PWR28" H 4100 5350 30  0001 C CNN
 F 1 "GND" H 4100 5280 30  0001 C CNN
 F 2 "" H 4100 5350 60  0000 C CNN
 F 3 "" H 4100 5350 60  0000 C CNN
@@ -302,10 +297,10 @@ F 3 "" H 4100 5350 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR012
+L GND #PWR16
 U 1 1 55D3BD37
 P 2700 3300
-F 0 "#PWR012" H 2700 3300 30  0001 C CNN
+F 0 "#PWR16" H 2700 3300 30  0001 C CNN
 F 1 "GND" H 2700 3230 30  0001 C CNN
 F 2 "" H 2700 3300 60  0000 C CNN
 F 3 "" H 2700 3300 60  0000 C CNN
@@ -313,10 +308,10 @@ F 3 "" H 2700 3300 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR013
+L GND #PWR10
 U 1 1 55D3BD93
 P 2300 3300
-F 0 "#PWR013" H 2300 3300 30  0001 C CNN
+F 0 "#PWR10" H 2300 3300 30  0001 C CNN
 F 1 "GND" H 2300 3230 30  0001 C CNN
 F 2 "" H 2300 3300 60  0000 C CNN
 F 3 "" H 2300 3300 60  0000 C CNN
@@ -324,10 +319,10 @@ F 3 "" H 2300 3300 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR014
+L GND #PWR5
 U 1 1 55D3BDEF
 P 1600 3250
-F 0 "#PWR014" H 1600 3250 30  0001 C CNN
+F 0 "#PWR5" H 1600 3250 30  0001 C CNN
 F 1 "GND" H 1600 3180 30  0001 C CNN
 F 2 "" H 1600 3250 60  0000 C CNN
 F 3 "" H 1600 3250 60  0000 C CNN
@@ -335,10 +330,10 @@ F 3 "" H 1600 3250 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR015
+L GND #PWR46
 U 1 1 55D3BE67
 P 5450 3250
-F 0 "#PWR015" H 5450 3250 30  0001 C CNN
+F 0 "#PWR46" H 5450 3250 30  0001 C CNN
 F 1 "GND" H 5450 3180 30  0001 C CNN
 F 2 "" H 5450 3250 60  0000 C CNN
 F 3 "" H 5450 3250 60  0000 C CNN
@@ -359,10 +354,10 @@ F 5 "CAP MLCC 100n ≥X5R 35V 10% [0603]" H 5250 3650 60  0001 C CNN "BOM"
 	-1   0    0    1   
 $EndComp
 $Comp
-L GND #PWR016
+L GND #PWR35
 U 1 1 55D41998
 P 4450 3250
-F 0 "#PWR016" H 4450 3250 30  0001 C CNN
+F 0 "#PWR35" H 4450 3250 30  0001 C CNN
 F 1 "GND" H 4450 3180 30  0001 C CNN
 F 2 "" H 4450 3250 60  0000 C CNN
 F 3 "" H 4450 3250 60  0000 C CNN
@@ -413,10 +408,10 @@ F 4 "DIST DIGIKEY 493-1868-ND" H 9100 4300 60  0001 C CNN "BOM"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR017
+L GND #PWR87
 U 1 1 55D4D0A0
 P 9100 4500
-F 0 "#PWR017" H 9100 4500 30  0001 C CNN
+F 0 "#PWR87" H 9100 4500 30  0001 C CNN
 F 1 "GND" H 9100 4430 30  0001 C CNN
 F 2 "" H 9100 4500 60  0000 C CNN
 F 3 "" H 9100 4500 60  0000 C CNN
@@ -567,7 +562,7 @@ Wire Notes Line
 Wire Wire Line
 	4100 3400 4100 4000
 Wire Wire Line
-	4100 3700 5150 3700
+	4100 3700 5200 3700
 Connection ~ 4100 3700
 Wire Wire Line
 	3800 3200 3800 3450
@@ -645,16 +640,10 @@ Wire Wire Line
 	5550 3550 5300 3550
 Connection ~ 5300 3550
 Wire Wire Line
-	5600 3900 5600 3850
-Wire Wire Line
-	5300 3900 5600 3900
+	5300 3900 5550 3900
 Connection ~ 5300 3900
 Wire Wire Line
-	5350 3850 5350 3900
-Connection ~ 5350 3900
-Wire Wire Line
-	5550 3850 5550 3900
-Connection ~ 5550 3900
+	5550 3900 5550 3850
 Wire Wire Line
 	5450 2900 5450 3000
 Connection ~ 5300 2900
@@ -693,10 +682,10 @@ Wire Wire Line
 	2700 4400 2700 4500
 Connection ~ 2700 4500
 $Comp
-L GND #PWR018
+L GND #PWR45
 U 1 1 55E31430
 P 5300 5600
-F 0 "#PWR018" H 5300 5600 30  0001 C CNN
+F 0 "#PWR45" H 5300 5600 30  0001 C CNN
 F 1 "GND" H 5300 5530 30  0001 C CNN
 F 2 "" H 5300 5600 60  0000 C CNN
 F 3 "" H 5300 5600 60  0000 C CNN
@@ -772,8 +761,8 @@ $Comp
 L PMSS3904 Q3
 U 1 1 55FFE67E
 P 3350 4500
-F 0 "Q3" H 3441 4550 50  0000 L CNN
-F 1 "3904" H 3441 4450 50  0000 L CNN
+F 0 "Q3" H 3483 4546 50  0000 L CNN
+F 1 "3904" H 3483 4454 50  0000 L CNN
 F 2 "smd-semi:SC-70" H 3350 4500 50  0001 C CNN
 F 3 "" H 3350 4500 60  0000 C CNN
 F 4 "NPN NXP PMSS3904" H 4150 5050 60  0001 C CNN "BOM"
@@ -784,8 +773,8 @@ $Comp
 L PMSS3904 Q4
 U 1 1 55FFE7C8
 P 3750 3550
-F 0 "Q4" H 3841 3600 50  0000 L CNN
-F 1 "3904" H 3841 3500 50  0000 L CNN
+F 0 "Q4" H 3883 3596 50  0000 L CNN
+F 1 "3904" H 3883 3504 50  0000 L CNN
 F 2 "smd-semi:SC-70" H 3750 3550 50  0001 C CNN
 F 3 "" H 3750 3550 60  0000 C CNN
 F 4 "NPN NXP PMSS3904" H 4550 4100 60  0001 C CNN "BOM"
@@ -796,8 +785,8 @@ $Comp
 L PMST4403 Q5
 U 1 1 55FFF32D
 P 4050 3300
-F 0 "Q5" H 4141 3350 50  0000 L CNN
-F 1 "4403" H 4141 3250 50  0000 L CNN
+F 0 "Q5" H 4183 3346 50  0000 L CNN
+F 1 "4403" H 4183 3254 50  0000 L CNN
 F 2 "smd-semi:SC-70" H 4050 3450 50  0001 C CNN
 F 3 "" H 4050 3300 60  0000 C CNN
 F 4 "PNP NXP PMST4403" H 4050 3550 60  0001 C CNN "BOM"
@@ -808,8 +797,8 @@ $Comp
 L PMST4403 Q6
 U 1 1 55FFFB5D
 P 4050 4100
-F 0 "Q6" H 4141 4150 50  0000 L CNN
-F 1 "4403" H 4141 4050 50  0000 L CNN
+F 0 "Q6" H 4183 4146 50  0000 L CNN
+F 1 "4403" H 4183 4054 50  0000 L CNN
 F 2 "smd-semi:SC-70" H 4050 4250 50  0001 C CNN
 F 3 "" H 4050 4100 60  0000 C CNN
 F 4 "PNP NXP PMST4403" H 4050 4350 60  0001 C CNN "BOM"
@@ -854,4 +843,6 @@ F 4 "CAP MLCC 220p C0G 50V 10% [0402]" H 6900 5150 60  0001 C CNN "BOM"
 	1    6100 4600
 	-1   0    0    1   
 $EndComp
+Wire Wire Line
+	5450 3700 5400 3700
 $EndSCHEMATC

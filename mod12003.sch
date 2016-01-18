@@ -1,90 +1,85 @@
 EESchema Schematic File Version 2
-LIBS:Xilinx
-LIBS:Vishay
-LIBS:TexasInstruments
-LIBS:symbol
-LIBS:supertex
-LIBS:st_ic
-LIBS:ST
-LIBS:skyworks
-LIBS:silabs
-LIBS:semi-trans-Vishay
-LIBS:semi-trans-Toshiba
-LIBS:semi-trans-TIP
-LIBS:semi-trans-TI
-LIBS:semi-trans-ST
-LIBS:semi-trans-PZT
-LIBS:semi-trans-OnSemi
-LIBS:semi-trans-NXP
-LIBS:semi-trans-MPS
-LIBS:semi-trans-MMB
-LIBS:semi-trans-misc
-LIBS:semi-trans-IXYS
-LIBS:semi-trans-IntRect
-LIBS:semi-trans-Infineon
-LIBS:semi-trans-Fairchild
-LIBS:semi-trans-EPC
-LIBS:semi-trans-DiodesInc
-LIBS:semi-trans-BC
-LIBS:semi-trans-AOS
-LIBS:semi-trans-2N
-LIBS:semi-thyristor-2N
-LIBS:semi-opto-misc
-LIBS:semi-diode-Vishay
-LIBS:semi-diode-ST
-LIBS:semi-diode-OnSemi
-LIBS:semi-diode-NXP
-LIBS:semi-diode-Murata
-LIBS:semi-diode-MMB
-LIBS:semi-diode-MCC
-LIBS:semi-diode-DiodesInc
-LIBS:semi-diode-BA
-LIBS:semi-diode-1N
-LIBS:_semi
-LIBS:Recom
-LIBS:power
-LIBS:pcb
-LIBS:pasv-xtal
-LIBS:pasv-res
-LIBS:pasv-ind
-LIBS:pasv-cap
-LIBS:pasv-Bourns
-LIBS:pasv-BiTech
-LIBS:passive
-LIBS:onsemi
-LIBS:NXP
-LIBS:Micron
-LIBS:Microchip
-LIBS:mechanical
-LIBS:maxim
-LIBS:MACOM
-LIBS:logic-7400
-LIBS:logic-4000
-LIBS:Littelfuse
-LIBS:LinearTech
-LIBS:_linear
-LIBS:Lattice
-LIBS:Intersil
-LIBS:FTDI
-LIBS:Fairchild
-LIBS:_electromech
-LIBS:display
-LIBS:DiodesInc
-LIBS:conn-test
-LIBS:conn-te
-LIBS:conn-tagconnect
-LIBS:conn-molex
-LIBS:conn-linx
-LIBS:conn-fci
-LIBS:conn-cui
-LIBS:conn-100mil
-LIBS:conn-2mm
-LIBS:Atmel
-LIBS:AnalogDevices
 LIBS:Altera
+LIBS:AnalogDevices
 LIBS:AOS
+LIBS:Atmel
+LIBS:conn-2mm
+LIBS:conn-100mil
+LIBS:conn-amphenol
+LIBS:conn-cui
+LIBS:conn-fci
+LIBS:conn-jae
+LIBS:conn-linx
+LIBS:conn-molex
+LIBS:conn-tagconnect
+LIBS:conn-te
+LIBS:conn-test
+LIBS:DiodesInc
+LIBS:display
+LIBS:electomech-misc
+LIBS:_electromech
+LIBS:Fairchild
+LIBS:FTDI
+LIBS:Intersil
+LIBS:Lattice
+LIBS:_linear
+LIBS:LinearTech
+LIBS:Littelfuse
+LIBS:logic-4000
+LIBS:logic-7400
+LIBS:MACOM
+LIBS:maxim
+LIBS:mechanical
+LIBS:Microchip
+LIBS:Micron
+LIBS:NXP
+LIBS:onsemi
+LIBS:passive
+LIBS:pasv-BiTech
+LIBS:pasv-Bourns
+LIBS:pasv-cap
+LIBS:pasv-ind
 LIBS:pasv-Murata
+LIBS:pasv-res
 LIBS:pasv-TDK
+LIBS:pasv-xtal
+LIBS:pcb
+LIBS:power
+LIBS:Recom
+LIBS:_semi
+LIBS:semi-diode-DiodesInc
+LIBS:semi-diode-generic
+LIBS:semi-diode-MCC
+LIBS:semi-diode-NXP
+LIBS:semi-diode-OnSemi
+LIBS:semi-diode-ST
+LIBS:semi-diode-Toshiba
+LIBS:semi-opto-generic
+LIBS:semi-opto-liteon
+LIBS:semi-thyristor-generic
+LIBS:semi-trans-AOS
+LIBS:semi-trans-DiodesInc
+LIBS:semi-trans-EPC
+LIBS:semi-trans-Fairchild
+LIBS:semi-trans-generic
+LIBS:semi-trans-Infineon
+LIBS:semi-trans-IRF
+LIBS:semi-trans-IXYS
+LIBS:semi-trans-NXP
+LIBS:semi-trans-OnSemi
+LIBS:semi-trans-ST
+LIBS:semi-trans-TI
+LIBS:semi-trans-Toshiba
+LIBS:semi-trans-Vishay
+LIBS:silabs
+LIBS:skyworks
+LIBS:ST
+LIBS:st_ic
+LIBS:supertex
+LIBS:symbol
+LIBS:TexasInstruments
+LIBS:Vishay
+LIBS:Xilinx
 LIBS:mod12003-cache
 EELAYER 25 0
 EELAYER END
@@ -200,30 +195,6 @@ F 3 "" H 9350 2450 60  0000 C CNN
 F 4 "DIST DIGIKEY 507-1193-1-ND" H 9350 2400 60  0001 C CNN "BOM"
 	1    9350 2400
 	0    1    1    0   
-$EndComp
-$Comp
-L SCR Q2
-U 1 1 55CC0302
-P 7650 3050
-F 0 "Q2" H 7730 3100 50  0000 L CNN
-F 1 "12A" H 7730 3000 50  0000 L CNN
-F 2 "smd-semi:TO-252" H 7650 3050 60  0001 C CNN
-F 3 "" H 7650 3050 60  0000 C CNN
-F 4 "DIST DIGIKEY 568-12231-1-ND" H 7650 3050 60  0001 C CNN "BOM"
-	1    7650 3050
-	1    0    0    -1  
-$EndComp
-$Comp
-L SCHOTTKY D1
-U 1 1 55CC11B2
-P 7950 3050
-F 0 "D1" H 7870 3000 50  0000 R CNN
-F 1 "40V/5A" H 7870 3100 50  0000 R CNN
-F 2 "smd-semi:TO-252" H 7950 3050 60  0001 C CNN
-F 3 "" H 7950 3050 60  0000 C CNN
-F 4 "DIST DIGIKEY FYD0504SATMCT-ND" H 7950 3050 60  0001 C CNN "BOM"
-	1    7950 3050
-	-1   0    0    1   
 $EndComp
 $Sheet
 S 3000 3700 1200 1700
@@ -375,7 +346,7 @@ F 4 "DIST DIGIKEY 507-1193-1-ND" H 9650 1800 60  0001 C CNN "BOM"
 $EndComp
 $Comp
 L AO4805 Q1
-U 1 1 55CFEE56
+U 1 2 55CFEE56
 P 1700 2450
 F 0 "Q1" V 1997 2450 50  0000 C CNN
 F 1 "AO4805" V 1897 2450 50  0000 C CNN
@@ -387,7 +358,7 @@ F 4 "PMOS AOS AO4805" H 2500 3000 60  0001 C CNN "BOM"
 $EndComp
 $Comp
 L AO4805 Q1
-U 2 1 55CFF672
+U 2 2 55CFF672
 P 2700 2450
 F 0 "Q1" V 2997 2450 50  0000 C CNN
 F 1 "AO4805" V 2897 2450 50  0000 C CNN
@@ -679,8 +650,6 @@ Wire Wire Line
 	6950 3500 6950 3700
 Connection ~ 6950 3700
 Wire Wire Line
-	1200 2400 1600 2400
-Wire Wire Line
 	900  2600 900  2650
 Wire Wire Line
 	2800 2400 3600 2400
@@ -689,7 +658,7 @@ Wire Wire Line
 Wire Wire Line
 	1750 2800 2850 2800
 Wire Wire Line
-	2650 2800 2650 2550
+	2650 2500 2650 2800
 Wire Wire Line
 	1950 2500 1950 2400
 Connection ~ 1950 2400
@@ -737,17 +706,7 @@ Wire Wire Line
 	9750 2100 9850 2100
 Connection ~ 9850 2100
 Wire Wire Line
-	1600 2350 1550 2350
-Wire Wire Line
-	1550 2350 1550 2400
-Connection ~ 1550 2400
-Wire Wire Line
-	1750 2550 1750 2900
-Wire Wire Line
-	2800 2350 2850 2350
-Wire Wire Line
-	2850 2350 2850 2400
-Connection ~ 2850 2400
+	1750 2500 1750 2900
 Wire Wire Line
 	6800 4050 6600 4100
 Wire Wire Line
@@ -1165,4 +1124,29 @@ Wire Wire Line
 	4200 4400 5400 4400
 Text Notes 9350 5600 0    30   ~ 0
 SCREW
+Wire Wire Line
+	1600 2400 1200 2400
+$Comp
+L BT151S-500R Q2
+U 1 1 569DCE94
+P 7650 3050
+F 0 "Q2" H 7733 3075 50  0000 L CNN
+F 1 "12A" H 7733 2983 50  0000 L CNN
+F 2 "smd-semi:TO-252" H 7733 2937 60  0001 L CNN
+F 3 "" H 7650 3050 60  0000 C CNN
+F 4 "DIST DIGIKEY 568-12231-1-ND" H 7650 3050 60  0001 C CNN "BOM"
+	1    7650 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L FYD0504SATM D1
+U 1 1 569E6183
+P 7950 3050
+F 0 "D1" H 7871 3005 50  0000 R CNN
+F 1 "40V/5A" H 7871 3097 50  0000 R CNN
+F 2 "smd-semi:TO-252" H 7870 3143 60  0001 R CNN
+F 3 "" H 7950 3050 60  0000 C CNN
+	1    7950 3050
+	-1   0    0    1   
+$EndComp
 $EndSCHEMATC

@@ -1,90 +1,85 @@
 EESchema Schematic File Version 2
-LIBS:Xilinx
-LIBS:Vishay
-LIBS:TexasInstruments
-LIBS:symbol
-LIBS:supertex
-LIBS:st_ic
-LIBS:ST
-LIBS:skyworks
-LIBS:silabs
-LIBS:semi-trans-Vishay
-LIBS:semi-trans-Toshiba
-LIBS:semi-trans-TIP
-LIBS:semi-trans-TI
-LIBS:semi-trans-ST
-LIBS:semi-trans-PZT
-LIBS:semi-trans-OnSemi
-LIBS:semi-trans-NXP
-LIBS:semi-trans-MPS
-LIBS:semi-trans-MMB
-LIBS:semi-trans-misc
-LIBS:semi-trans-IXYS
-LIBS:semi-trans-IntRect
-LIBS:semi-trans-Infineon
-LIBS:semi-trans-Fairchild
-LIBS:semi-trans-EPC
-LIBS:semi-trans-DiodesInc
-LIBS:semi-trans-BC
-LIBS:semi-trans-AOS
-LIBS:semi-trans-2N
-LIBS:semi-thyristor-2N
-LIBS:semi-opto-misc
-LIBS:semi-diode-Vishay
-LIBS:semi-diode-ST
-LIBS:semi-diode-OnSemi
-LIBS:semi-diode-NXP
-LIBS:semi-diode-Murata
-LIBS:semi-diode-MMB
-LIBS:semi-diode-MCC
-LIBS:semi-diode-DiodesInc
-LIBS:semi-diode-BA
-LIBS:semi-diode-1N
-LIBS:_semi
-LIBS:Recom
-LIBS:power
-LIBS:pcb
-LIBS:pasv-xtal
-LIBS:pasv-res
-LIBS:pasv-ind
-LIBS:pasv-cap
-LIBS:pasv-Bourns
-LIBS:pasv-BiTech
-LIBS:passive
-LIBS:onsemi
-LIBS:NXP
-LIBS:Micron
-LIBS:Microchip
-LIBS:mechanical
-LIBS:maxim
-LIBS:MACOM
-LIBS:logic-7400
-LIBS:logic-4000
-LIBS:Littelfuse
-LIBS:LinearTech
-LIBS:_linear
-LIBS:Lattice
-LIBS:Intersil
-LIBS:FTDI
-LIBS:Fairchild
-LIBS:_electromech
-LIBS:display
-LIBS:DiodesInc
-LIBS:conn-test
-LIBS:conn-te
-LIBS:conn-tagconnect
-LIBS:conn-molex
-LIBS:conn-linx
-LIBS:conn-fci
-LIBS:conn-cui
-LIBS:conn-100mil
-LIBS:conn-2mm
-LIBS:Atmel
-LIBS:AnalogDevices
 LIBS:Altera
+LIBS:AnalogDevices
 LIBS:AOS
+LIBS:Atmel
+LIBS:conn-2mm
+LIBS:conn-100mil
+LIBS:conn-amphenol
+LIBS:conn-cui
+LIBS:conn-fci
+LIBS:conn-jae
+LIBS:conn-linx
+LIBS:conn-molex
+LIBS:conn-tagconnect
+LIBS:conn-te
+LIBS:conn-test
+LIBS:DiodesInc
+LIBS:display
+LIBS:electomech-misc
+LIBS:_electromech
+LIBS:Fairchild
+LIBS:FTDI
+LIBS:Intersil
+LIBS:Lattice
+LIBS:_linear
+LIBS:LinearTech
+LIBS:Littelfuse
+LIBS:logic-4000
+LIBS:logic-7400
+LIBS:MACOM
+LIBS:maxim
+LIBS:mechanical
+LIBS:Microchip
+LIBS:Micron
+LIBS:NXP
+LIBS:onsemi
+LIBS:passive
+LIBS:pasv-BiTech
+LIBS:pasv-Bourns
+LIBS:pasv-cap
+LIBS:pasv-ind
 LIBS:pasv-Murata
+LIBS:pasv-res
 LIBS:pasv-TDK
+LIBS:pasv-xtal
+LIBS:pcb
+LIBS:power
+LIBS:Recom
+LIBS:_semi
+LIBS:semi-diode-DiodesInc
+LIBS:semi-diode-generic
+LIBS:semi-diode-MCC
+LIBS:semi-diode-NXP
+LIBS:semi-diode-OnSemi
+LIBS:semi-diode-ST
+LIBS:semi-diode-Toshiba
+LIBS:semi-opto-generic
+LIBS:semi-opto-liteon
+LIBS:semi-thyristor-generic
+LIBS:semi-trans-AOS
+LIBS:semi-trans-DiodesInc
+LIBS:semi-trans-EPC
+LIBS:semi-trans-Fairchild
+LIBS:semi-trans-generic
+LIBS:semi-trans-Infineon
+LIBS:semi-trans-IRF
+LIBS:semi-trans-IXYS
+LIBS:semi-trans-NXP
+LIBS:semi-trans-OnSemi
+LIBS:semi-trans-ST
+LIBS:semi-trans-TI
+LIBS:semi-trans-Toshiba
+LIBS:semi-trans-Vishay
+LIBS:silabs
+LIBS:skyworks
+LIBS:ST
+LIBS:st_ic
+LIBS:supertex
+LIBS:symbol
+LIBS:TexasInstruments
+LIBS:Vishay
+LIBS:Xilinx
 LIBS:mod12003-cache
 EELAYER 25 0
 EELAYER END
@@ -126,10 +121,10 @@ F 5 "Value" H 4400 2300 60  0001 C CNN "Manuf"
 	0    1    1    0   
 $EndComp
 $Comp
-L GND #PWR080
+L GND #PWR38
 U 1 1 55CF1E50
 P 4700 3100
-F 0 "#PWR080" H 4700 3100 30  0001 C CNN
+F 0 "#PWR38" H 4700 3100 30  0001 C CNN
 F 1 "GND" H 4700 3030 30  0001 C CNN
 F 2 "" H 4700 3100 60  0000 C CNN
 F 3 "" H 4700 3100 60  0000 C CNN
@@ -137,10 +132,10 @@ F 3 "" H 4700 3100 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR081
+L GND #PWR44
 U 1 1 55CF22FE
 P 5100 2700
-F 0 "#PWR081" H 5100 2700 30  0001 C CNN
+F 0 "#PWR44" H 5100 2700 30  0001 C CNN
 F 1 "GND" H 5100 2630 30  0001 C CNN
 F 2 "" H 5100 2700 60  0000 C CNN
 F 3 "" H 5100 2700 60  0000 C CNN
@@ -148,10 +143,10 @@ F 3 "" H 5100 2700 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR082
+L GND #PWR8
 U 1 1 55CF5903
 P 2000 2750
-F 0 "#PWR082" H 2000 2750 30  0001 C CNN
+F 0 "#PWR8" H 2000 2750 30  0001 C CNN
 F 1 "GND" H 2000 2680 30  0001 C CNN
 F 2 "" H 2000 2750 60  0000 C CNN
 F 3 "" H 2000 2750 60  0000 C CNN
@@ -189,10 +184,10 @@ $EndComp
 Text Notes 3750 2700 0    50   ~ 0
 800mV
 $Comp
-L GND #PWR083
+L GND #PWR59
 U 1 1 55CF73E9
 P 7000 5250
-F 0 "#PWR083" H 7000 5250 30  0001 C CNN
+F 0 "#PWR59" H 7000 5250 30  0001 C CNN
 F 1 "GND" H 7000 5180 30  0001 C CNN
 F 2 "" H 7000 5250 60  0000 C CNN
 F 3 "" H 7000 5250 60  0000 C CNN
@@ -200,10 +195,10 @@ F 3 "" H 7000 5250 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR084
+L GND #PWR60
 U 1 1 55CF7440
 P 7000 5650
-F 0 "#PWR084" H 7000 5650 30  0001 C CNN
+F 0 "#PWR60" H 7000 5650 30  0001 C CNN
 F 1 "GND" H 7000 5580 30  0001 C CNN
 F 2 "" H 7000 5650 60  0000 C CNN
 F 3 "" H 7000 5650 60  0000 C CNN
@@ -211,10 +206,10 @@ F 3 "" H 7000 5650 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR085
+L GND #PWR71
 U 1 1 55CF7489
 P 8100 5650
-F 0 "#PWR085" H 8100 5650 30  0001 C CNN
+F 0 "#PWR71" H 8100 5650 30  0001 C CNN
 F 1 "GND" H 8100 5580 30  0001 C CNN
 F 2 "" H 8100 5650 60  0000 C CNN
 F 3 "" H 8100 5650 60  0000 C CNN
@@ -222,10 +217,10 @@ F 3 "" H 8100 5650 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR086
+L GND #PWR75
 U 1 1 55CF7948
 P 8200 5450
-F 0 "#PWR086" H 8200 5450 30  0001 C CNN
+F 0 "#PWR75" H 8200 5450 30  0001 C CNN
 F 1 "GND" H 8200 5380 30  0001 C CNN
 F 2 "" H 8200 5450 60  0000 C CNN
 F 3 "" H 8200 5450 60  0000 C CNN
@@ -233,10 +228,10 @@ F 3 "" H 8200 5450 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR087
+L GND #PWR81
 U 1 1 55CF79B0
 P 8600 5450
-F 0 "#PWR087" H 8600 5450 30  0001 C CNN
+F 0 "#PWR81" H 8600 5450 30  0001 C CNN
 F 1 "GND" H 8600 5380 30  0001 C CNN
 F 2 "" H 8600 5450 60  0000 C CNN
 F 3 "" H 8600 5450 60  0000 C CNN
@@ -244,10 +239,10 @@ F 3 "" H 8600 5450 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR088
+L GND #PWR58
 U 1 1 55CF7ED3
 P 6850 6050
-F 0 "#PWR088" H 6850 6050 30  0001 C CNN
+F 0 "#PWR58" H 6850 6050 30  0001 C CNN
 F 1 "GND" H 6850 5980 30  0001 C CNN
 F 2 "" H 6850 6050 60  0000 C CNN
 F 3 "" H 6850 6050 60  0000 C CNN
@@ -281,10 +276,10 @@ F 5 "Value" H 5500 2500 60  0001 C CNN "Manuf"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR089
+L GND #PWR47
 U 1 1 55CF8594
 P 5500 2700
-F 0 "#PWR089" H 5500 2700 30  0001 C CNN
+F 0 "#PWR47" H 5500 2700 30  0001 C CNN
 F 1 "GND" H 5500 2630 30  0001 C CNN
 F 2 "" H 5500 2700 60  0000 C CNN
 F 3 "" H 5500 2700 60  0000 C CNN
@@ -305,10 +300,10 @@ F 5 "Value" H 6600 5300 60  0001 C CNN "Manuf"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR090
+L GND #PWR55
 U 1 1 55CF8971
 P 6600 5450
-F 0 "#PWR090" H 6600 5450 30  0001 C CNN
+F 0 "#PWR55" H 6600 5450 30  0001 C CNN
 F 1 "GND" H 6600 5380 30  0001 C CNN
 F 2 "" H 6600 5450 60  0000 C CNN
 F 3 "" H 6600 5450 60  0000 C CNN
@@ -367,10 +362,10 @@ F 4 "BEAD SMD 120 250mA [0603]" H 5800 2300 60  0001 C CNN "BOM"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR091
+L GND #PWR52
 U 1 1 55CF9273
 P 6100 2700
-F 0 "#PWR091" H 6100 2700 30  0001 C CNN
+F 0 "#PWR52" H 6100 2700 30  0001 C CNN
 F 1 "GND" H 6100 2630 30  0001 C CNN
 F 2 "" H 6100 2700 60  0000 C CNN
 F 3 "" H 6100 2700 60  0000 C CNN
@@ -378,10 +373,10 @@ F 3 "" H 6100 2700 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR092
+L GND #PWR88
 U 1 1 55CF93FF
 P 9100 5450
-F 0 "#PWR092" H 9100 5450 30  0001 C CNN
+F 0 "#PWR88" H 9100 5450 30  0001 C CNN
 F 1 "GND" H 9100 5380 30  0001 C CNN
 F 2 "" H 9100 5450 60  0000 C CNN
 F 3 "" H 9100 5450 60  0000 C CNN
@@ -401,10 +396,10 @@ F 4 "IC TI TLV70233DBV" H 7250 3050 60  0001 C CNN "BOM"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR093
+L GND #PWR57
 U 1 1 55CFA194
 P 6800 3800
-F 0 "#PWR093" H 6800 3800 30  0001 C CNN
+F 0 "#PWR57" H 6800 3800 30  0001 C CNN
 F 1 "GND" H 6800 3730 30  0001 C CNN
 F 2 "" H 6800 3800 60  0000 C CNN
 F 3 "" H 6800 3800 60  0000 C CNN
@@ -425,10 +420,10 @@ F 5 "Value" H 7800 3600 60  0001 C CNN "Manuf"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR094
+L GND #PWR67
 U 1 1 55CFA3B7
 P 7600 3500
-F 0 "#PWR094" H 7600 3500 30  0001 C CNN
+F 0 "#PWR67" H 7600 3500 30  0001 C CNN
 F 1 "GND" H 7600 3430 30  0001 C CNN
 F 2 "" H 7600 3500 60  0000 C CNN
 F 3 "" H 7600 3500 60  0000 C CNN
@@ -436,10 +431,10 @@ F 3 "" H 7600 3500 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR095
+L GND #PWR68
 U 1 1 55CFA470
 P 7800 3800
-F 0 "#PWR095" H 7800 3800 30  0001 C CNN
+F 0 "#PWR68" H 7800 3800 30  0001 C CNN
 F 1 "GND" H 7800 3730 30  0001 C CNN
 F 2 "" H 7800 3800 60  0000 C CNN
 F 3 "" H 7800 3800 60  0000 C CNN
@@ -447,10 +442,10 @@ F 3 "" H 7800 3800 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR096
+L GND #PWR29
 U 1 1 55CFB0F5
 P 4150 2650
-F 0 "#PWR096" H 4150 2650 30  0001 C CNN
+F 0 "#PWR29" H 4150 2650 30  0001 C CNN
 F 1 "GND" H 4150 2580 30  0001 C CNN
 F 2 "" H 4150 2650 60  0000 C CNN
 F 3 "" H 4150 2650 60  0000 C CNN
@@ -678,10 +673,10 @@ Wire Wire Line
 Wire Wire Line
 	8200 3300 8200 3500
 $Comp
-L GND #PWR097
+L GND #PWR72
 U 1 1 55D3FE1F
 P 8200 3800
-F 0 "#PWR097" H 8200 3800 30  0001 C CNN
+F 0 "#PWR72" H 8200 3800 30  0001 C CNN
 F 1 "GND" H 8200 3730 30  0001 C CNN
 F 2 "" H 8200 3800 60  0000 C CNN
 F 3 "" H 8200 3800 60  0000 C CNN
