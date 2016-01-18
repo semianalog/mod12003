@@ -32,17 +32,8 @@ bool psu_enabled(void)
 
 enum psu_reg_mode psu_get_reg_mode(void)
 {
-    bool cv;
-    bool cc;
-
-    // These don't _need_ to be in an atomic block, but it makes sure they will
-    // be read in close proximity to each other, eliminating false positives for
-    // PSU_OSCILLATING.
-
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        cv = PGET(P_VLIM);
-        cc = PGET(P_ILIM);
-    }
+    bool cv = PGET(P_VLIM);
+    bool cc = PGET(P_ILIM);
 
     if ((cc && cv) || (!cc && !cv)) {
         return PSU_OSCILLATING;
